@@ -1113,37 +1113,31 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
         svgs.push(s);
       }
     }
+    var appUrl = window.location.href;
     var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+      + '<meta name="viewport" content="width=device-width,initial-scale=1">'
       + '<title>' + title + '</title>'
       + '<style>'
       + '@page{margin:0.5in}'
       + 'body{font-family:sans-serif;margin:0;background:white;color:black}'
+      + '.back{display:block;padding:10px 16px;background:#8b3a1a;color:white;font-family:sans-serif;font-size:13px;text-decoration:none;letter-spacing:0.05em;margin-bottom:12px}'
+      + '@media print{.back{display:none}}'
       + 'h1{font-size:13pt;border-bottom:1pt solid black;padding-bottom:5px;margin-bottom:8px;font-weight:bold}'
       + '.row{page-break-inside:avoid;break-inside:avoid;margin-bottom:2px;overflow:visible}'
       + 'svg{display:block;width:680px;height:auto;overflow:visible}'
       + 'svg path,svg rect,svg ellipse,svg circle,svg polygon,svg line,svg text{fill:black!important;stroke:black!important}'
       + '</style></head><body>'
+      + '<a class="back" href="' + appUrl + '">← Back to Mixed Up Rhythms</a>'
       + '<h1>' + title + '</h1>';
     svgs.forEach(function(s){html+='<div class="row">'+s+'</div>';});
     html += '</body></html>';
-    // Use hidden iframe so we stay on the app page
-    var old = document.getElementById('print-frame');
-    if (old) old.parentNode.removeChild(old);
-    var frame = document.createElement('iframe');
-    frame.id = 'print-frame';
-    frame.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:800px;height:600px;border:none;visibility:hidden';
-    document.body.appendChild(frame);
-    frame.contentDocument.open();
-    frame.contentDocument.write(html);
-    frame.contentDocument.close();
-    setTimeout(function() {
-      frame.contentWindow.focus();
-      frame.contentWindow.print();
-      setTimeout(function() {
-        var f = document.getElementById('print-frame');
-        if (f) f.parentNode.removeChild(f);
-      }, 3000);
-    }, 500);
+    var win = window.open('', '_blank');
+    if (win) {
+      win.document.write(html);
+      win.document.close();
+    } else {
+      alert('Please allow popups for this site to export PDF.');
+    }
   }
   window.doExport=doExport;
 
