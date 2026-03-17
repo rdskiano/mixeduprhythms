@@ -28,8 +28,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 .rotate-sub { font-family: 'Inconsolata', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: #666; }
 
 /* Top bar */
-.topbar { background: var(--ink); border-bottom: 3px solid var(--accent); padding: 0 28px; height: 48px; display: flex; align-items: center; justify-content: space-between; }
-.app-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.14em; color: var(--cream); }
+.topbar { background: var(--ink); border-bottom: 3px solid var(--accent); padding: 0 28px; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+.app-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.14em; color: var(--cream); }
 .settings-btn { background: none; border: 1px solid #444; color: #888; width: 30px; height: 30px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; }
 .settings-btn:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -160,58 +160,13 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   font-size: 0.9rem; letter-spacing: 0.1em; cursor: pointer;
 }
 .pdf-close-btn:hover { border-color: var(--accent); color: var(--accent); }
-.pdf-frame { flex: 1; border: none; width: 100%; display: block; }
-
-
-/* Fullscreen exercise viewer */
-.fs-overlay {
-  display: none; position: fixed; inset: 0; z-index: 400;
-  background: var(--paper); overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.fs-overlay.open { display: block; }
-.fs-topbar {
-  position: sticky; top: 0; z-index: 10;
-  background: var(--ink); border-bottom: 3px solid var(--accent);
-  padding: 0 20px; height: 50px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.fs-title {
-  font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
-  letter-spacing: 0.14em; color: var(--cream);
-}
-.fs-close {
-  background: none; border: 1px solid #555; color: #aaa;
-  padding: 6px 16px; font-family: 'Bebas Neue', sans-serif;
-  font-size: 0.9rem; letter-spacing: 0.1em; cursor: pointer;
-}
-.fs-close:hover { border-color: var(--accent); color: var(--accent); }
-.fs-content {
-  padding: 24px 20px 60px;
-  max-width: 100%;
-}
-.fs-ex-row { margin-bottom: 8px; }
-.fs-ex-row svg { width: 100% !important; display: block; }
-.fs-ex-row path, .fs-ex-row rect, .fs-ex-row ellipse,
-.fs-ex-row circle, .fs-ex-row polygon, .fs-ex-row line,
-.fs-ex-row text {
-  fill: #1a1612 !important; stroke: #1a1612 !important;
-}
-
-/* Fullscreen button on export bar */
+.pdf-frame { flex: 1; border: none; width: 100%; display: block; }/* Fullscreen button on export bar */
 .start-over-btn {
   background: #2a231d; color: #aaa; border: 1px solid #444;
   padding: 8px 18px; font-family: 'Bebas Neue', sans-serif;
   font-size: 0.95rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap;
 }
 .start-over-btn:hover { border-color: var(--accent); color: var(--cream); }
-
-.fullscreen-btn {
-  background: #2a231d; color: var(--cream); border: 1px solid #444;
-  padding: 8px 18px; font-family: 'Bebas Neue', sans-serif;
-  font-size: 0.95rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap;
-}
-.fullscreen-btn:hover { border-color: var(--accent); color: var(--accent); }
 
 /* Print overlay */
 .print-overlay { display:none; position:fixed; inset:0; z-index:500; background:white; overflow-y:auto; -webkit-overflow-scrolling:touch; }
@@ -277,7 +232,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 </div>
 
 <div class="topbar">
-  <div style="display:flex;flex-direction:column;gap:1px"><div class="app-title">Mixed Up Rhythms</div><div style="font-family:'Inconsolata',monospace;font-size:0.52rem;letter-spacing:0.14em;text-transform:uppercase;color:#888">Rhythm Pattern Generator</div></div>
+  <div style="display:flex;flex-direction:column;gap:1px"><div class="app-title">Mixed Up Rhythms</div><div style="font-family:'Inconsolata',monospace;font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;color:#aaa">Rhythm Pattern Generator</div></div>
   <div style="display:flex;gap:8px"><button class="settings-btn" onclick="openHelp()" title="How to use">?</button><button class="settings-btn" onclick="openSettings()" title="Database Settings">⚙</button></div>
 </div>
 
@@ -358,7 +313,6 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
 <!-- Export bar (shown after generate) -->
 <div class="export-bar" id="export-bar">
-  <button class="fullscreen-btn" id="fullscreen-btn">&#x26F6; Full Screen</button>
   <button class="export-pdf-btn" onclick="doExport()">&#x1F5A8; Export / Print PDF</button>
   <button class="start-over-btn" id="start-over-btn">&#8635; Start Over</button>
 </div>
@@ -377,41 +331,6 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   </div>
 </div>
 
-<!-- Fullscreen overlay -->
-<div class="fs-overlay" id="fs-overlay">
-  <div class="fs-topbar">
-    <div class="fs-title" id="fs-title">Exercises</div>
-    <button class="export-pdf-btn" onclick="doExport()">&#x1F5A8; Export / Print PDF</button>
-    <button class="fs-close" onclick="closeFullscreen()">&#215; Close</button>
-  </div>
-  <div class="fs-content" id="fs-content"></div>
-</div>
-
-<!-- Help overlay -->
-<div class="settings-overlay" id="help-overlay" onclick="outsideCloseHelp(event)">
-  <div class="settings-panel">
-    <div class="sp-h2">How to Use <button class="close-btn" onclick="closeHelp()">&#x2715;</button></div>
-    <div class="sp-sec"><div class="sp-h3">What is this?</div><div class="sp-p">Mixed Up Rhythms is a rhythm practice tool for working musicians and serious students. Enter a melodic passage from a piece you are working on, and the app generates that passage written in every rhythm pattern for a given group size — a complete systematic workout in all rhythms.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 1 — Choose a rhythm group size</div><div class="sp-p">Select how many notes are in each rhythm pattern: 3, 4, 5, 6, 7, or 8. Start with 3 or 4 if you are new to the system.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 2 — Set clef, key, and instrument</div><div class="sp-p">Choose the clef your instrument reads in and the key of your passage. The instrument setting transposes the audio preview to concert pitch — so if you play B♭ clarinet, what you hear matches what you sound.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 3 — Name and enter your passage</div><div class="sp-p">Type a document name, then tap notes on the keyboard. Tap a chip's spelling button to cycle enharmonics. Use <strong>&#x25BA; Play Passage</strong> to hear your entry back.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 4 — Generate</div><div class="sp-p">Tap <strong>Generate Exercises</strong> to produce the full set of rhythm patterns. Use <strong>&#x26F6; Full Screen</strong> for tablet reading or <strong>Export / Print PDF</strong> to export.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Tips</div><div class="sp-p">— Your passage plays once through each pattern, stopping when all notes are used.<br>— Any passage length works — a few notes or an entire phrase.<br>— Tap <strong>&#x21BB; Start Over</strong> to reset and begin a new passage.</div></div>
-    <div class="sp-sec"><div class="sp-h3">About</div><div class="sp-p">Created by Ralph Skiano, Principal Clarinet of the Detroit Symphony Orchestra.<br><br><a href="/cdn-cgi/l/email-protection#5e2c3a2d35373f30311e39333f3732703d3133" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="91e3f5e2faf8f0fffed1f6fcf0f8fdbff2fefc">[email&#160;protected]</span></a></div></div>
-  </div>
-</div>
-
-<!-- Print overlay -->
-<div class="print-overlay" id="print-overlay">
-  <div class="print-toolbar">
-    <div class="print-toolbar-title" id="print-overlay-title">Exercises</div>
-    <div class="print-toolbar-btns">
-      <button class="print-action-btn" onclick="window.print()">Print / Save PDF</button>
-      <button class="print-close-btn" onclick="closePrintOverlay()">&#x2715; Close</button>
-    </div>
-  </div>
-  <div class="print-content" id="print-content"></div>
-</div>
 
 <!-- Settings -->
 <div class="settings-overlay" id="settings-overlay" onclick="outsideClose(event)">
@@ -1233,53 +1152,6 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   }
   window.closePdfOverlay = closePdfOverlay;
 
-  // ── FULLSCREEN VIEWER ────────────────────────────────
-  document.getElementById('fullscreen-btn').addEventListener('click', function() {
-    var sec = g2s(activeGroup);
-    var fsDocName = document.getElementById('doc-name').value.trim();
-    document.getElementById('fs-title').textContent = fsDocName ? fsDocName + ' — ' + sec : sec;
-
-    // Clone all exercise rows into fullscreen content
-    var fsCont = document.getElementById('fs-content');
-    fsCont.innerHTML = '';
-
-    // Re-render exercises at larger scale into fullscreen div
-    var pats = DB.filter(function(p) { return p.section === sec; });
-    var clef = cClef();
-
-    pats.forEach(function(p, i) {
-      var row = document.createElement('div');
-      row.className = 'fs-ex-row';
-      var idLabelFs = document.createElement('div');
-      idLabelFs.className = 'ex-id-label';
-      idLabelFs.textContent = '#' + p.id + '  ·  ' + p.timeSig + (p.beaming ? '  ·  [' + p.beaming + ']' : '');
-      row.appendChild(idLabelFs);
-      var staveDivFs = document.createElement('div');
-      staveDivFs.id = 'fs-ex-' + i;
-      row.appendChild(staveDivFs);
-      fsCont.appendChild(row);
-      try {
-        var abc = buildAbcString(p, selNotes.slice(), clef);
-        ABCJS.renderAbc('fs-ex-' + i, abc, {
-          scale: 1.2,
-          paddingright: 10,
-          paddingleft: 10,
-          paddingbottom: 6,
-          paddingtop: 6,
-          add_classes: true,
-          staffwidth: Math.min(window.innerWidth - 40, 900),
-          wrap: {minSpacing: 2.0, maxSpacing: 3.5, preferredMeasuresPerLine: 4},
-        });
-      } catch(e) {}
-    });
-
-    document.getElementById('fs-overlay').classList.add('open');
-  });
-
-  function closeFullscreen() {
-    document.getElementById('fs-overlay').classList.remove('open');
-  }
-  window.closeFullscreen = closeFullscreen;
 
   // Start Over — reset all state
   document.getElementById('start-over-btn').addEventListener('click', function() {
