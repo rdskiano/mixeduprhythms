@@ -244,18 +244,17 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 }
 
 @media print {
-  .topbar,.controls,.export-bar,.settings-overlay,.rotate-overlay,.empty-state,.play-btn,.gen-btn { display:none!important }
+  .topbar,.controls,.export-bar,.settings-overlay,.rotate-overlay,.empty-state,.play-btn,.gen-btn,.fs-topbar { display:none!important }
   body { background:white!important; color:black!important }
   .output-area { background:white!important; padding:8px!important }
   .sheet { box-shadow:none!important; padding:12px!important; max-width:100%!important; background:white!important }
-  .sheet-title { font-size:15pt!important; border-bottom:1.5pt solid black!important; color:black!important }
+  .sheet-title { font-size:13pt!important; border-bottom:1.5pt solid black!important; color:black!important }
   .ex-row { page-break-inside:avoid; margin-bottom:2px!important }
+  .ex-id-label { display:none!important }
   .ex-row svg { width:100%!important }
   .ex-row svg path,.ex-row svg rect,.ex-row svg ellipse,.ex-row svg circle,.ex-row svg polygon,.ex-row svg line,.ex-row svg text { fill:black!important; stroke:black!important }
-  /* Fullscreen print support */
   .fs-overlay:not(.open) { display:none!important }
   .fs-overlay.open { display:block!important; position:static!important; background:white!important; overflow:visible!important }
-  .fs-topbar { display:none!important }
   .fs-content { padding:8px!important }
   .fs-ex-row svg { width:100%!important }
   .fs-ex-row svg path,.fs-ex-row svg rect,.fs-ex-row svg ellipse,.fs-ex-row svg circle,.fs-ex-row svg polygon,.fs-ex-row svg line,.fs-ex-row svg text { fill:black!important; stroke:black!important }
@@ -347,11 +346,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     <div class="chips-row" id="chips"><span class="no-notes">No notes entered</span></div>
     <div class="count-hint" id="count-hint"></div>
     <button class="play-btn" id="play-btn" onclick="playPassage()">&#9654; Play Passage</button>
-    <div style="margin-top:10px">
-      <div class="ctl-label" style="margin-bottom:4px">Document Name</div>
-      <input id="doc-name" type="text" placeholder="e.g. Brahms mvt 1" style="width:100%;background:#1a1410;border:1px solid #333;color:var(--cream);padding:7px 10px;font-family:'Inconsolata',monospace;font-size:0.82rem;outline:none;box-sizing:border-box">
-    </div>
-    <button class="gen-btn" id="gen-btn" disabled style="margin-top:8px">Generate Exercises</button>
+    <div style="margin-top:10px"><div class="ctl-label" style="margin-bottom:4px;font-family:'Bebas Neue',sans-serif;font-size:0.68rem;letter-spacing:0.2em;color:var(--accent)">Document Name</div><input id="doc-name" type="text" placeholder="e.g. Brahms mvt 1" style="width:100%;background:#1a1410;border:1px solid #333;color:var(--cream);padding:7px 10px;font-family:'Inconsolata',monospace;font-size:0.82rem;outline:none;box-sizing:border-box"></div>    <button class="gen-btn" id="gen-btn" disabled style="margin-top:8px">Generate Exercises</button>
   </div>
 </div>
 
@@ -393,8 +388,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     <div class="sp-sec"><div class="sp-h3">What is this?</div><div class="sp-p">Mixed Up Rhythms is a rhythm practice tool for working musicians and serious students. Enter a melodic passage from a piece you are working on, and the app generates that passage written in every rhythm pattern for a given group size — a complete systematic workout in all rhythms.</div></div>
     <div class="sp-sec"><div class="sp-h3">Step 1 — Choose a rhythm group size</div><div class="sp-p">Select how many notes are in each rhythm pattern: 3, 4, 5, 6, 7, or 8. Start with 3 or 4 if you are new to the system.</div></div>
     <div class="sp-sec"><div class="sp-h3">Step 2 — Set clef, key, and instrument</div><div class="sp-p">Choose the clef your instrument reads in and the key of your passage. The instrument setting transposes the audio preview to concert pitch — so if you play B♭ clarinet, what you hear matches what you sound.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 3 — Name and enter your passage</div><div class="sp-p">Type a document name (e.g. the piece you are working on), then tap notes on the keyboard in order. Tap a chip's spelling button to cycle enharmonics (e.g. F → E♯). Tap ✕ to remove a note. Use <strong>► Play Passage</strong> to hear your entry back.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 4 — Generate</div><div class="sp-p">Tap <strong>Generate Exercises</strong> to produce the full set of rhythm patterns. Use <strong>⛶ Full Screen</strong> to expand the notation on a tablet. Use <strong>Print / Save PDF</strong> to export from either view.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 3 — Name and enter your passage</div><div class="sp-p">Type a document name, then tap notes on the keyboard in order. Tap a chip's spelling button to cycle enharmonics (e.g. F → E♯). Tap ✕ to remove a note. Use <strong>► Play Passage</strong> to hear your entry back.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 4 — Generate</div><div class="sp-p">Tap <strong>Generate Exercises</strong> to produce the full set of rhythm patterns. Use <strong>⛶ Full Screen</strong> for tablet reading or <strong>Print / Save PDF</strong> to export.</div></div>
     <div class="sp-sec"><div class="sp-h3">Tips</div><div class="sp-p">— Your passage plays once through each pattern, stopping when all notes are used.<br>— Any passage length works — a few notes or an entire phrase.<br>— Tap <strong>↻ Start Over</strong> to reset and begin a new passage.</div></div>
     <div class="sp-sec"><div class="sp-h3">About</div><div class="sp-p">Created by Ralph Skiano, Principal Clarinet of the Detroit Symphony Orchestra.<br><br><a href="mailto:rdskiano@gmail.com" style="color:var(--accent)">rdskiano@gmail.com</a></div></div>
   </div>
@@ -1089,8 +1084,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
       try {
         var abc = buildAbcString(p, selNotes.slice(), clef);
         ABCJS.renderAbc('ex-' + i, abc, {
-          scale: 1.2,
-          paddingright: 30,
+          scale: 0.85,
+          paddingright: 20,
           paddingleft: 15,
           paddingbottom: 10,
           paddingtop: 10,
@@ -1214,7 +1209,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
       try {
         var abc = buildAbcString(p, selNotes.slice(), clef);
         ABCJS.renderAbc('fs-ex-' + i, abc, {
-          scale: 1.6,
+          scale: 1.2,
           paddingright: 20,
           paddingleft: 10,
           paddingbottom: 8,
