@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mixed Up Rhythms</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Bebas+Neue&family=Inconsolata:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/abcjs/6.2.3/abcjs-basic-min.js"></script>
+<style>
+:root {
+  --cream: #f5f0e8; --cream-dark: #ede7d9; --paper: #fdfaf5;
+  --ink: #1a1612; --mid: #5a4e42; --light: #9a8e82; --rule: #c8b89a;
+  --accent: #8b3a1a; --gold: #9a7010;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; }
+
+/* Rotate overlay */
+.rotate-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: var(--ink); flex-direction: column; align-items: center;
+  justify-content: center; gap: 18px; text-align: center; padding: 32px;
+}
+.rotate-icon { font-size: 3rem; animation: tilt 2s ease-in-out infinite; }
+@keyframes tilt { 0%,100%{transform:rotate(0deg)} 40%,60%{transform:rotate(90deg)} }
+.rotate-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.14em; color: var(--cream); }
+.rotate-sub { font-family: 'Inconsolata', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: #666; }
+
+/* Top bar */
+.topbar { background: var(--ink); border-bottom: 3px solid var(--accent); padding: 0 28px; height: 48px; display: flex; align-items: center; justify-content: space-between; }
+.app-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.14em; color: var(--cream); }
+.settings-btn { background: none; border: 1px solid #444; color: #888; width: 30px; height: 30px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; }
+.settings-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Controls bar */
+.controls {
+  background: #111009; border-bottom: 2px solid #2a231d;
+  padding: 16px 28px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;
+}
+.ctl-block { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+.ctl-label { font-family: 'Bebas Neue', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; color: var(--accent); }
+.group-btns { display: flex; gap: 5px; }
+.group-btn { width: 42px; height: 42px; border: 2px solid #2a231d; background: transparent; color: #666; font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; cursor: pointer; transition: all 0.12s; display: flex; align-items: center; justify-content: center; }
+.group-btn:hover { border-color: var(--accent); color: var(--accent); }
+.group-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+.sel-wrap { position: relative; }
+.app-sel { appearance: none; -webkit-appearance: none; background: #1a1410; border: 1px solid #333; color: var(--cream); padding: 7px 26px 7px 10px; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; cursor: pointer; }
+.app-sel:focus { outline: 1px solid var(--accent); }
+.sel-arrow { pointer-events: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #666; font-size: 0.65rem; }
+#key-sel { min-width: 190px; }
+#instrument-sel { min-width: 250px; }
+
+/* Keyboard block — full width */
+.kb-block { flex-basis: 100%; width: 100%; }
+.kb-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.kb-prompt { font-family: 'Inconsolata', monospace; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; color: #666; }
+.kb-prompt strong { color: var(--cream); }
+.clear-btn { background: none; border: none; color: #555; font-family: 'Inconsolata', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; text-decoration: underline; }
+.clear-btn:hover { color: var(--accent); }
+.piano-wrap { width: 100%; height: 130px; user-select: none; -webkit-user-select: none; }
+#piano-svg { width: 100%; height: 100%; display: block; cursor: pointer; touch-action: none; }
+
+/* Note chips */
+.chips-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; min-height: 28px; align-items: center; }
+.chip { background: var(--accent); color: white; font-family: 'Inconsolata', monospace; font-size: 0.7rem; letter-spacing: 0.04em; padding: 3px 7px 3px 9px; display: inline-flex; align-items: center; gap: 3px; animation: pop 0.1s ease; }
+@keyframes pop { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.chip .enh { background: rgba(255,255,255,0.18); border: none; color: rgba(255,255,255,0.8); font-family: 'Inconsolata', monospace; font-size: 0.58rem; padding: 1px 4px; cursor: pointer; border-radius: 1px; }
+.chip .enh:hover { background: rgba(255,255,255,0.32); }
+.chip .rm { background: none; border: none; color: rgba(255,255,255,0.45); cursor: pointer; font-size: 0.9rem; line-height: 1; padding: 0 0 0 2px; }
+.chip .rm:hover { color: white; }
+.no-notes { font-family: 'Inconsolata', monospace; font-size: 0.6rem; color: #444; }
+.count-hint { font-family: 'Inconsolata', monospace; font-size: 0.58rem; color: #555; margin-top: 3px; }
+.count-hint strong { color: #888; }
+
+/* Generate button inline with controls */
+.play-btn {
+  background: #2a231d; color: var(--cream); border: 1px solid #444;
+  padding: 8px; font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem;
+  letter-spacing: 0.12em; cursor: pointer; transition: all 0.15s;
+  width: 100%; display: block; margin-top: 8px; margin-bottom: 4px;
+}
+.play-btn:hover { border-color: var(--accent); color: var(--accent); }
+.play-btn.playing { border-color: var(--accent); color: var(--accent); }
+
+.gen-btn { background: var(--accent); color: white; border: none; padding: 12px; font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 0.12em; cursor: pointer; transition: all 0.15s; width: 100%; display: block; }
+.gen-btn:hover { background: #a04520; }
+.gen-btn:disabled { background: #2a231d; color: #444; cursor: not-allowed; }
+
+/* Export bar */
+.export-bar { background: #0d0b09; border-bottom: 2px solid #2a231d; padding: 12px 28px; display: none; align-items: center; gap: 12px; flex-wrap: wrap; }
+.export-bar.visible { display: flex; }
+.export-label { font-family: 'Inconsolata', monospace; font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: #666; white-space: nowrap; }
+
+.export-btn { background: var(--accent); color: white; border: none; padding: 8px 20px; font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; letter-spacing: 0.12em; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+.export-btn:hover { background: #a04520; }
+
+/* Output area */
+.output-area { background: var(--cream-dark); padding: 28px 32px 60px; min-height: 50vh; }
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 0; color: var(--light); text-align: center; gap: 10px; opacity: 0.35; }
+.empty-clef { font-size: 4rem; line-height: 1; }
+.empty-p { font-family: 'Inconsolata', monospace; font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; }
+
+/* Exercises sheet */
+.sheet { background: var(--paper); max-width: 860px; margin: 0 auto; padding: 36px 44px 48px; box-shadow: 0 4px 40px rgba(0,0,0,0.15); }
+.sheet-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.1em; color: var(--ink); border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 16px; }
+
+/* Pattern ID label */
+.ex-id-label {
+  font-family: 'Inconsolata', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1px;
+  padding-left: 2px;
+}
+
+/* Each exercise */
+.ex-row { margin-bottom: 2px; }
+/* ABCjs injects its own SVG — make it full width and force dark ink */
+.ex-row svg { width: 100% !important; display: block; }
+.ex-row .abcjs-container { width: 100%; }
+
+/* Force all ABCjs notation elements to be dark ink */
+.ex-row svg path,
+.ex-row svg rect,
+.ex-row svg ellipse,
+.ex-row svg circle,
+.ex-row svg polygon,
+.ex-row svg line,
+.ex-row svg polyline,
+.ex-row svg text {
+  fill: #1a1612 !important;
+  stroke: #1a1612 !important;
+}
+/* Except staff lines which should be slightly lighter */
+.ex-row svg .abcjs-staff path,
+.ex-row svg .abcjs-bar path {
+  stroke: #3a332a !important;
+}
+
+/* PDF viewer overlay */
+.pdf-overlay {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.92); flex-direction: column;
+}
+.pdf-overlay.open { display: flex; }
+.pdf-toolbar {
+  background: #111; padding: 12px 20px; display: flex;
+  align-items: center; gap: 14px; flex-shrink: 0;
+  border-bottom: 2px solid var(--accent);
+}
+.pdf-toolbar-title {
+  font-family: "Bebas Neue", sans-serif; font-size: 1rem;
+  letter-spacing: 0.12em; color: var(--cream); flex: 1;
+}
+.pdf-share-hint {
+  font-family: "Inconsolata", monospace; font-size: 0.65rem;
+  letter-spacing: 0.08em; text-transform: uppercase; color: #888;
+}
+.pdf-close-btn {
+  background: none; border: 1px solid #444; color: #888;
+  padding: 6px 14px; font-family: "Bebas Neue", sans-serif;
+  font-size: 0.9rem; letter-spacing: 0.1em; cursor: pointer;
+}
+.pdf-close-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-frame { flex: 1; border: none; width: 100%; display: block; }
+
+
+/* Fullscreen exercise viewer */
+.fs-overlay {
+  display: none; position: fixed; inset: 0; z-index: 400;
+  background: var(--paper); overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.fs-overlay.open { display: block; }
+.fs-topbar {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--ink); border-bottom: 3px solid var(--accent);
+  padding: 0 20px; height: 50px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.fs-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
+  letter-spacing: 0.14em; color: var(--cream);
+}
+.fs-close {
+  background: none; border: 1px solid #555; color: #aaa;
+  padding: 6px 16px; font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.9rem; letter-spacing: 0.1em; cursor: pointer;
+}
+.fs-close:hover { border-color: var(--accent); color: var(--accent); }
+.fs-content {
+  padding: 24px 20px 60px;
+  max-width: 100%;
+}
+.fs-ex-row { margin-bottom: 8px; }
+.fs-ex-row svg { width: 100% !important; display: block; }
+.fs-ex-row path, .fs-ex-row rect, .fs-ex-row ellipse,
+.fs-ex-row circle, .fs-ex-row polygon, .fs-ex-row line,
+.fs-ex-row text {
+  fill: #1a1612 !important; stroke: #1a1612 !important;
+}
+
+/* Fullscreen button on export bar */
+.start-over-btn {
+  background: #2a231d; color: #aaa; border: 1px solid #444;
+  padding: 8px 18px; font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.95rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap;
+}
+.start-over-btn:hover { border-color: var(--accent); color: var(--cream); }
+
+.fullscreen-btn {
+  background: #2a231d; color: var(--cream); border: 1px solid #444;
+  padding: 8px 18px; font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.95rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap;
+}
+.fullscreen-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Settings panel */
+.settings-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; justify-content: flex-end; }
+.settings-overlay.open { display: flex; }
+.settings-panel { background: var(--paper); width: 360px; height: 100vh; overflow-y: auto; padding: 26px 22px; box-shadow: -4px 0 30px rgba(0,0,0,0.2); color: var(--ink); }
+.sp-h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 0.14em; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.close-btn { background: none; border: none; color: var(--light); font-size: 1.1rem; cursor: pointer; }
+.close-btn:hover { color: var(--accent); }
+.sp-sec { margin-bottom: 20px; }
+.sp-h3 { font-family: 'Inconsolata', monospace; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; padding-bottom: 3px; border-bottom: 1px solid var(--rule); }
+.sp-p { font-size: 0.86rem; color: var(--mid); line-height: 1.6; margin-bottom: 10px; }
+.upload-zone { border: 2px dashed var(--rule); padding: 14px; text-align: center; cursor: pointer; transition: all 0.15s; position: relative; }
+.upload-zone:hover { border-color: var(--accent); }
+.upload-zone.loaded { border-color: #3a8e4a; }
+.upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.uz-lbl { font-family: 'Inconsolata', monospace; font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light); }
+.upload-zone.loaded .uz-lbl { color: #3a8e4a; }
+.uz-sub { font-size: 0.78rem; color: var(--light); margin-top: 3px; font-style: italic; }
+.db-stats { font-family: 'Inconsolata', monospace; font-size: 0.64rem; color: var(--mid); margin-top: 10px; line-height: 1.9; }
+.db-stats strong { color: var(--ink); }
+
+
+  body { background: white !important; }
+  .output-area { background: white !important; padding: 0 !important; }
+  .sheet { box-shadow: none !important; padding: 20px !important; max-width: 100% !important; }
+  .sheet-title { font-size: 18pt !important; border-bottom: 2pt solid black !important; }
+  .ex-row { margin-bottom: 4px !important; page-break-inside: avoid; }
+  .ex-row svg { width: 100% !important; }
+  /* Force dark ink for print */
+  .ex-row svg path, .ex-row svg rect, .ex-row svg ellipse,
+  .ex-row svg circle, .ex-row svg polygon, .ex-row svg line,
+  .ex-row svg text { fill: black !important; stroke: black !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Rotate prompt -->
+<div class="rotate-overlay" id="rotate-overlay">
+  <div class="rotate-icon">📱</div>
+  <div class="rotate-title">Please rotate your device</div>
+  <div class="rotate-sub">This app works best in landscape orientation</div>
+</div>
+
+<div class="topbar">
+  <div style="display:flex;flex-direction:column;gap:1px"><div class="app-title">Mixed Up Rhythms</div><div style="font-family:'Inconsolata',monospace;font-size:0.52rem;letter-spacing:0.14em;text-transform:uppercase;color:#555">Rhythm Pattern Generator</div></div>
+  <div style="display:flex;gap:8px"><button class="settings-btn" onclick="openHelp()" title="How to use">?</button><button class="settings-btn" onclick="openSettings()" title="Database Settings">⚙</button></div>
+</div>
+
+<div class="controls">
+  <div class="ctl-block">
+    <div class="ctl-label">Group Size</div>
+    <div class="group-btns">
+      <button class="group-btn" data-n="3">3</button>
+      <button class="group-btn" data-n="4">4</button>
+      <button class="group-btn" data-n="5">5</button>
+      <button class="group-btn" data-n="6">6</button>
+      <button class="group-btn" data-n="7">7</button>
+      <button class="group-btn" data-n="8">8</button>
+    </div>
+  </div>
+  <div class="ctl-block">
+    <div class="ctl-label">Clef</div>
+    <div class="sel-wrap">
+      <select class="app-sel" id="clef-sel">
+        <option value="treble">Treble</option>
+        <option value="bass">Bass</option>
+        <option value="alto">Alto</option>
+        <option value="tenor">Tenor</option>
+      </select>
+      <span class="sel-arrow">▾</span>
+    </div>
+  </div>
+  <div class="ctl-block">
+    <div class="ctl-label">Key</div>
+    <div class="sel-wrap">
+      <select class="app-sel" id="key-sel">
+        <option value="C">C major / A minor</option>
+        <option value="G">G major / E minor</option>
+        <option value="D">D major / B minor</option>
+        <option value="A">A major / F# minor</option>
+        <option value="E">E major / C# minor</option>
+        <option value="B">B major / G# minor</option>
+        <option value="Fs">F# major / D# minor</option>
+        <option value="F">F major / D minor</option>
+        <option value="Bb">Bb major / G minor</option>
+        <option value="Eb">Eb major / C minor</option>
+        <option value="Ab">Ab major / F minor</option>
+        <option value="Db">Db major / Bb minor</option>
+        <option value="Gb">Gb major / Eb minor</option>
+      </select>
+      <span class="sel-arrow">▾</span>
+    </div>
+  </div>
+  <div class="ctl-block">
+    <div class="ctl-label">Instrument</div>
+    <div class="sel-wrap">
+      <select class="app-sel" id="instrument-sel">
+        <option value="0">Concert pitch</option>
+        <option value="-2" selected>Bb Clarinet / Trumpet / Tenor Sax</option>
+        <option value="-3">A Clarinet / A Trumpet</option>
+        <option value="3">Eb Alto Sax / Eb Clarinet</option>
+        <option value="-5">F Horn</option>
+        <option value="9">Eb Baritone Sax</option>
+      </select>
+      <span class="sel-arrow">▾</span>
+    </div>
+  </div>
+  <!-- Keyboard — full width row -->
+  <div class="kb-block">
+    <div class="kb-header">
+      <div class="kb-prompt" id="kb-prompt">Select a group size, then enter your passage</div>
+      <button class="clear-btn" onclick="clearNotes()">Clear</button>
+    </div>
+    <div class="piano-wrap">
+      <svg id="piano-svg" viewBox="0 0 1008 130" preserveAspectRatio="none"></svg>
+    </div>
+    <div class="chips-row" id="chips"><span class="no-notes">No notes entered</span></div>
+    <div class="count-hint" id="count-hint"></div>
+    <button class="play-btn" id="play-btn" onclick="playPassage()">&#9654; Play Passage</button>
+    <button class="gen-btn" id="gen-btn" disabled style="margin-top:12px">Generate Exercises</button>
+  </div>
+</div>
+
+<!-- Export bar (shown after generate) -->
+<div class="export-bar" id="export-bar">
+  <button class="fullscreen-btn" id="fullscreen-btn">&#x26F6; Full Screen</button>
+  <button class="start-over-btn" id="start-over-btn">&#8635; Start Over</button>
+</div>
+
+<!-- Output -->
+<div class="output-area" id="output-area">
+  <div class="empty-state" id="empty-state">
+    <div class="empty-clef">𝄞</div>
+    <div class="empty-p">Select a group size · enter your passage · generate</div>
+  </div>
+  <div id="sheet-wrap" style="display:none">
+    <div class="sheet" id="sheet">
+      <div class="sheet-title" id="sheet-title"></div>
+      <div id="exercises"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Fullscreen overlay -->
+<div class="fs-overlay" id="fs-overlay">
+  <div class="fs-topbar">
+    <div class="fs-title" id="fs-title">Exercises</div>
+    <button class="fs-close" onclick="closeFullscreen()">&#215; Close</button>
+  </div>
+  <div class="fs-content" id="fs-content"></div>
+</div>
+
+<!-- Help overlay -->
+<div class="settings-overlay" id="help-overlay" onclick="outsideCloseHelp(event)">
+  <div class="settings-panel">
+    <div class="sp-h2">How to Use <button class="close-btn" onclick="closeHelp()">✕</button></div>
+
+    <div class="sp-sec">
+      <div class="sp-h3">What is this?</div>
+      <div class="sp-p">Mixed Up Rhythms is a rhythm practice tool for working musicians and serious students. Enter a melodic passage from a piece you are working on, and the app generates that passage written in every rhythm pattern for a given group size — giving you a complete systematic workout of the passage in all rhythms.</div>
+    </div>
+
+    <div class="sp-sec">
+      <div class="sp-h3">Step 1 — Choose a rhythm group size</div>
+      <div class="sp-p">Select how many notes are in each rhythm pattern: 3, 4, 5, 6, 7, or 8. Start with 3 or 4 if you are new to the system.</div>
+    </div>
+
+    <div class="sp-sec">
+      <div class="sp-h3">Step 2 — Set clef, key, and instrument</div>
+      <div class="sp-p">Choose the clef your instrument reads in and the key of your passage. The instrument setting transposes the audio preview to your concert pitch — so if you play B♭ clarinet, what you hear matches what you sound.</div>
+    </div>
+
+    <div class="sp-sec">
+      <div class="sp-h3">Step 3 — Enter your passage</div>
+      <div class="sp-p">Tap notes on the keyboard in order. Each note appears as a chip above the Generate button. Tap a chip to cycle its enharmonic spelling (e.g. F → E♯ → F). Tap ✕ to remove a note. Use <strong>▶ Play Passage</strong> to hear your entry back before generating.</div>
+    </div>
+
+    <div class="sp-sec">
+      <div class="sp-h3">Step 4 — Generate</div>
+      <div class="sp-p">Tap <strong>Generate Exercises</strong> to produce the full set of rhythm patterns for your passage. Each exercise shows its pattern ID and time signature. Use <strong>⛶ Full Screen</strong> to expand the notation for easier reading on a tablet.</div>
+    </div>
+
+    <div class="sp-sec">
+      <div class="sp-h3">Tips</div>
+      <div class="sp-p">
+        — The passage plays <em>once through</em> each pattern, stopping when all notes are used.<br>
+        — Your passage can be any length — a few notes from a tricky passage or an entire phrase.<br>
+        — Tap <strong>↺ Start Over</strong> to reset everything and begin a new passage.<br>
+        — The ⚙ settings button lets you upload an updated pattern database CSV.
+      </div>
+    </div>
+
+    <div class="sp-sec">
+      <div class="sp-h3">About</div>
+      <div class="sp-p">Created by Ralph Skiano, Principal Clarinet of the Detroit Symphony Orchestra.<br><br><a href="mailto:rdskiano@gmail.com" style="color:var(--accent)">rdskiano@gmail.com</a></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Settings -->
+<div class="settings-overlay" id="settings-overlay" onclick="outsideClose(event)">
+  <div class="settings-panel">
+    <div class="sp-h2">Database Settings <button class="close-btn" onclick="closeSettings()">✕</button></div>
+    <div class="sp-sec">
+      <div class="sp-h3">Pattern Database</div>
+      <div class="sp-p">Built-in database has 24 three-note patterns. Upload a CSV to add more groups.</div>
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" accept=".csv" id="csv-input">
+        <div class="uz-lbl" id="uz-lbl">Upload CSV to update database</div>
+        <div class="uz-sub">Pattern ID · Section · Time Sig · Note 1 · Note 2…</div>
+      </div>
+      <div class="db-stats" id="db-stats"></div>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+(function() {
+
+  // ── KEY SPELLING ─────────────────────────────────────
+  var KEY_ACC = {
+    'C':{}, 'G':{'F':'F#'}, 'D':{'F':'F#','C':'C#'},
+    'A':{'F':'F#','C':'C#','G':'G#'}, 'E':{'F':'F#','C':'C#','G':'G#','D':'D#'},
+    'B':{'F':'F#','C':'C#','G':'G#','D':'D#','A':'A#'},
+    'Fs':{'F':'F#','C':'C#','G':'G#','D':'D#','A':'A#','E':'E#'},
+    'F':{'B':'Bb'}, 'Bb':{'B':'Bb','E':'Eb'}, 'Eb':{'B':'Bb','E':'Eb','A':'Ab'},
+    'Ab':{'B':'Bb','E':'Eb','A':'Ab','D':'Db'},
+    'Db':{'B':'Bb','E':'Eb','A':'Ab','D':'Db','G':'Gb'},
+    'Gb':{'B':'Bb','E':'Eb','A':'Ab','D':'Db','G':'Gb','C':'Cb'},
+  };
+  var S2F = {'C#':'Db','D#':'Eb','F#':'Gb','G#':'Ab','A#':'Bb'};
+  var F2S = {'Db':'C#','Eb':'D#','Gb':'F#','Ab':'G#','Bb':'A#','Cb':'B'};
+
+  function spellForKey(raw, key) {
+    var acc = KEY_ACC[key] || {};
+    var m = raw.match(/^([A-G])(#?)(\d)$/);
+    if (!m) return raw;
+    var pc = m[1], sharp = m[2], oct = m[3];
+    if (!sharp) {
+      var ff = pc + 'b', flatted = false;
+      Object.keys(acc).forEach(function(k) { if (acc[k] === ff) flatted = true; });
+      return flatted ? pc + 'b' + oct : raw;
+    } else {
+      var spc = pc + '#', useSharp = false;
+      Object.keys(acc).forEach(function(k) { if (acc[k] === spc) useSharp = true; });
+      if (useSharp) return spc + oct;
+      var fl = S2F[spc], useFlat = false;
+      if (fl) Object.keys(acc).forEach(function(k) { if (acc[k] === fl) useFlat = true; });
+      return useFlat ? fl + oct : spc + oct;
+    }
+  }
+
+  var ENH_NEXT = {
+    // Standard enharmonics (single accidentals)
+    'C':'B#',  'B#':'C##', 'C##':'Db', 'Db':'C#',  'C#':'Dbb', 'Dbb':'C',
+    'D':'D##', 'D##':'Ebb','Ebb':'D#', 'D#':'Eb',  'Eb':'D',
+    'E':'Fb',  'Fb':'Ebb', 'E#':'F',   'F':'E#',
+    'F#':'Gb', 'Gb':'F##', 'F##':'G',  'G':'Gbb',  'Gbb':'F#',
+    'G#':'Ab', 'Ab':'G##', 'G##':'A',  'A':'Abb',  'Abb':'G#',
+    'A#':'Bb', 'Bb':'A##', 'A##':'B',  'B':'Cbb',  'Cbb':'A#',
+    'B#':'C',  'Cb':'B'
+  };
+  function flipEnh(n) {
+    var m = n.match(/^([A-G])(##|bb|#|b)?(\d)$/); if (!m) return n;
+    var pc=m[1]+(m[2]||''),oct=parseInt(m[3]),next=ENH_NEXT[pc];
+    if(!next) return n;
+    return next+((pc==='B#')?oct+1:(pc==='Cb')?oct-1:oct);
+  }
+  function hasEnharm(n) {
+    var m=n.match(/^([A-G])(##|bb|#|b)?(\d)$/); if(!m) return false;
+    return !!ENH_NEXT[m[1]+(m[2]||'')];
+  }
+  function isAcc(n) { return n.indexOf('#') !== -1 || /[A-G]b/.test(n); }
+  function dn(n) { return n.replace('##','𝄪').replace('bb','𝄫').replace('#','♯').replace(/([A-G])b/g,'$1♭'); }
+
+  // ── MIDI / AUDIO ─────────────────────────────────────
+  var CHR = {'C':0,'C#':1,'Db':1,'D':2,'D#':3,'Eb':3,'E':4,'F':5,'F#':6,'Gb':6,'G':7,'G#':8,'Ab':8,'A':9,'A#':10,'Bb':10,'B':11,'Cb':11};
+  function midi(n) {
+    var m = n.match(/^([A-G](?:##|bb|#|b)?)(\d)$/); if (!m) return 60;
+    var pc = m[1];
+    // Handle double accidentals in CHR lookup
+    var s;
+    if (CHR[pc] !== undefined) { s = CHR[pc]; }
+    else if (pc.slice(-2) === '##') { s = (CHR[pc.slice(0,-1)] || 0) + 1; }
+    else if (pc.slice(-2) === 'bb') { s = (CHR[pc.slice(0,-1)] || 0) - 1; }
+    else { s = 0; }
+    return (parseInt(m[2]) + 1) * 12 + ((s % 12) + 12) % 12;
+  }
+  function transposeOffset() {
+    var s = document.getElementById('instrument-sel'); return s ? parseInt(s.value) || 0 : 0;
+  }
+  var AC = null;
+  function playNote(n) {
+    try {
+      if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+      var f = 440 * Math.pow(2, (midi(n) + transposeOffset() - 69) / 12);
+      var o = AC.createOscillator(), g = AC.createGain();
+      o.connect(g); g.connect(AC.destination); o.type = 'triangle';
+      o.frequency.setValueAtTime(f, AC.currentTime);
+      g.gain.setValueAtTime(0, AC.currentTime);
+      g.gain.linearRampToValueAtTime(0.35, AC.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.75);
+      o.start(AC.currentTime); o.stop(AC.currentTime + 0.75);
+    } catch(e) {}
+  }
+
+  // ── DATABASE ──────────────────────────────────────────
+  var DB = [
+    {id:1,section:"Three-Note Rhythm Patterns",timeSig:"2/8",beaming:"",notes:["8","16","16"]},
+    {id:2,section:"Three-Note Rhythm Patterns",timeSig:"2/8",beaming:"",notes:["16","16","8"]},
+    {id:3,section:"Three-Note Rhythm Patterns",timeSig:"2/8",beaming:"",notes:["16","8","16"]},
+    {id:4,section:"Three-Note Rhythm Patterns",timeSig:"2/8",beaming:"",notes:["8","16.","32"]},
+    {id:5,section:"Three-Note Rhythm Patterns",timeSig:"2/8",beaming:"",notes:["8.","32","32"]},
+    {id:6,section:"Three-Note Rhythm Patterns",timeSig:"2/8",beaming:"",notes:["32","32","8."]},
+    {id:7,section:"Three-Note Rhythm Patterns",timeSig:"2/8",beaming:"0",notes:["32","8.","32"]},
+    {id:8,section:"Three-Note Rhythm Patterns",timeSig:"3/8",beaming:"2+1",notes:["8.","16","8"]},
+    {id:9,section:"Three-Note Rhythm Patterns",timeSig:"3/8",beaming:"1+2",notes:["8","8.","16"]},
+    {id:10,section:"Three-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["8","16","8."]},
+    {id:11,section:"Three-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["q.","8","8"]},
+    {id:12,section:"Three-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","8","q."]},
+    {id:13,section:"Three-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","q.","8"]},
+    {id:14,section:"Three-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["q","q","8"]},
+    {id:15,section:"Three-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["q","8","q"]},
+    {id:16,section:"Three-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8.","16","q."]},
+    {id:17,section:"Three-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["q.","8.","16"]},
+    {id:18,section:"Three-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["16","16","h"]},
+    {id:19,section:"Three-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["h","16","16"]},
+    {id:20,section:"Three-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["q","8.","8."]},
+    {id:21,section:"Three-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8.","8.","q"]},
+    {id:22,section:"Three-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["h","q","8"]},
+    {id:23,section:"Three-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["q.","q","q"]},
+    {id:24,section:"Three-Note Rhythm Patterns",timeSig:"7/8",beaming:"3+2+2",notes:["q.","q.","8"]},
+    {id:25,section:"Four-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["8","8","16","16"]},
+    {id:26,section:"Four-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["16","16","8","8"]},
+    {id:27,section:"Four-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["8","16","16","8"]},
+    {id:28,section:"Four-Note Rhythm Patterns",timeSig:"3/8",beaming:"3",notes:["16","8","8","16"]},
+    {id:29,section:"Four-Note Rhythm Patterns",timeSig:"3/8",beaming:"2+1",notes:["8.","16","16","16"]},
+    {id:30,section:"Four-Note Rhythm Patterns",timeSig:"3/8",beaming:"1+2",notes:["16","16","8.","16"]},
+    {id:31,section:"Four-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["16","8.","16","16"]},
+    {id:32,section:"Four-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["16","16","16","8."]},
+    {id:33,section:"Four-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8.","16","8","8"]},
+    {id:34,section:"Four-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8","8","8.","16"]},
+    {id:35,section:"Four-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8","8.","16","8"]},
+    {id:36,section:"Four-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","8.","8","8"]},
+    {id:37,section:"Four-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8.","16","16","8."]},
+    {id:38,section:"Four-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","8.","8.","16"]},
+    {id:39,section:"Four-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8.","8","8","16"]},
+    {id:40,section:"Four-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["q","8","8","8"]},
+    {id:41,section:"Four-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","q","8","8"]},
+    {id:42,section:"Four-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["q","8.","16","8"]},
+    {id:43,section:"Four-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8.","16","q","8"]},
+    {id:44,section:"Four-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["q","8","q","q"]},
+    {id:45,section:"Four-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["q","q","8","q"]},
+    {id:46,section:"Four-Note Rhythm Patterns",timeSig:"7/8",beaming:"3+3+2",notes:["q.","8.","16","q"]},
+    {id:47,section:"Five-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["8","16","16","16","16"]},
+    {id:48,section:"Five-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["16","16","16","16","8"]},
+    {id:49,section:"Five-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["16","16","8","16","16"]},
+    {id:50,section:"Five-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["8","16.","32","16.","32"]},
+    {id:51,section:"Five-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["16.","32","16.","32","8"]},
+    {id:52,section:"Five-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["8","8","16t","16t","16t"]},
+    {id:53,section:"Five-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["16t","16t","16t","8","8"]},
+    {id:54,section:"Five-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["8","16t","16t","16t","8"]},
+    {id:55,section:"Five-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["q","16","16","16","16"]},
+    {id:56,section:"Five-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","16","16","q"]},
+    {id:57,section:"Five-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8","8","8t","8t","8t"]},
+    {id:58,section:"Five-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8t","8t","8t","8","8"]},
+    {id:59,section:"Five-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8.","16","8t","8t","8t"]},
+    {id:60,section:"Five-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8t","8t","8t","8.","16"]},
+    {id:61,section:"Five-Note Rhythm Patterns",timeSig:"5/16",beaming:"",notes:["16.","32","16","16","16"]},
+    {id:62,section:"Five-Note Rhythm Patterns",timeSig:"5/16",beaming:"",notes:["16","16","16","16.","32"]},
+    {id:63,section:"Five-Note Rhythm Patterns",timeSig:"5/16",beaming:"",notes:["8","16","16","32","32"]},
+    {id:64,section:"Five-Note Rhythm Patterns",timeSig:"5/16",beaming:"",notes:["32","32","16","16","8"]},
+    {id:65,section:"Five-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8.","16","8.","16","8"]},
+    {id:66,section:"Five-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8.","16","8","8.","16"]},
+    {id:67,section:"Five-Note Rhythm Patterns",timeSig:"7/16",beaming:"",notes:["8","8","16","16","16"]},
+    {id:68,section:"Five-Note Rhythm Patterns",timeSig:"7/16",beaming:"",notes:["8","16","16","8","16"]},
+    {id:69,section:"Five-Note Rhythm Patterns",timeSig:"7/16",beaming:"",notes:["8","16","16","16","8"]},
+    {id:70,section:"Five-Note Rhythm Patterns",timeSig:"7/16",beaming:"",notes:["16","16","8","8","16"]},
+    {id:71,section:"Five-Note Rhythm Patterns",timeSig:"7/16",beaming:"3+4",notes:["16","16","16","8.","16"]},
+    {id:72,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8","8","16","16","16","16"]},
+    {id:73,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8","16","16","16","16","8"]},
+    {id:74,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","16","16","8","8"]},
+    {id:75,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","8","8","16","16"]},
+    {id:76,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","8","16","8","16","16"]},
+    {id:77,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","8","16","16","16","8"]},
+    {id:78,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","8","8","16","16","16"]},
+    {id:79,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8","16","16","16","8","16"]},
+    {id:80,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"2+2",notes:["8","8","8","16t","16t","16t"]},
+    {id:81,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"2+2",notes:["8","8","16t","16t","16t","8"]},
+    {id:82,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"2+2",notes:["8","16t","16t","16t","8","8"]},
+    {id:83,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"2+2",notes:["16t","16t","16t","8","8","8"]},
+    {id:84,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8.","16","16","16","16","16"]},
+    {id:85,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"2",notes:["16","16","8.","16","16","16"]},
+    {id:86,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","16","16","16","8."]},
+    {id:87,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","8.","16","16","16","16"]},
+    {id:88,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"2+2",notes:["8.","32t","32t","32t","8.","16"]},
+    {id:89,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"2+2",notes:["8.","16","8.","32t","32t","32t"]},
+    {id:90,section:"Six-Note Rhythm Patterns",timeSig:"2/4",beaming:"2+2",notes:["32t","32t","32t","8.","16","8."]},
+    {id:91,section:"Six-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["8","8","32","32","32","32"]},
+    {id:92,section:"Six-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["32","32","32","32","8","8"]},
+    {id:93,section:"Six-Note Rhythm Patterns",timeSig:"3/8",beaming:"3",notes:["32","32","8","8","32","32"]},
+    {id:94,section:"Six-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["8","16","16","16t","16t","16t"]},
+    {id:95,section:"Six-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["16t","16t","16t","16","16","8"]},
+    {id:96,section:"Six-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["16t","16t","16t","8.","32","32"]},
+    {id:97,section:"Six-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["8","8","8","8.","16","8"]},
+    {id:98,section:"Six-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["8.","16","8","8","8","8"]},
+    {id:99,section:"Six-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["8","8.","16","8.","16","8"]},
+    {id:100,section:"Six-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["8.","16","8","8","8.","16"]},
+    {id:101,section:"Six-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["16","16","8","8","8","8"]},
+    {id:102,section:"Six-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","16","16","8","8","8"]},
+    {id:103,section:"Six-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","8","16","16","8","8"]},
+    {id:104,section:"Six-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","8","8","16","16","8"]},
+    {id:105,section:"Six-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","8","8","8","16","16"]},
+    {id:106,section:"Six-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["16","16","8","8.","16","8"]},
+    {id:107,section:"Six-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8.","16","8","8","16","16"]},
+    {id:108,section:"Six-Note Rhythm Patterns",timeSig:"5/8",beaming:"3+2",notes:["16","16","8.","16","8.","16"]},
+    {id:109,section:"Six-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8.","16","8.","16","16","16"]},
+    {id:110,section:"Six-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["q","8","8","8","8","8"]},
+    {id:111,section:"Six-Note Rhythm Patterns",timeSig:"7/8",beaming:"3+2+2",notes:["8","8","8","q","8","8"]},
+    {id:112,section:"Six-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["8","q","8","8","8","8"]},
+    {id:113,section:"Six-Note Rhythm Patterns",timeSig:"7/8",beaming:"3+2+2",notes:["q","8","8.","16","8.","16"]},
+    {id:114,section:"Six-Note Rhythm Patterns",timeSig:"7/8",beaming:"3+2+2",notes:["8.","16","8","q","16","8."]},
+    {id:115,section:"Six-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["q","8.","16","8.","16","8"]},
+    {id:116,section:"Seven-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8","16","16","16","16","16","16"]},
+    {id:117,section:"Seven-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","16","16","16","16","8"]},
+    {id:118,section:"Seven-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","8","16","16","16","16"]},
+    {id:119,section:"Seven-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","8","16","16","16","16","16"]},
+    {id:120,section:"Seven-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8","16.","32","16.","32","16.","32"]},
+    {id:121,section:"Seven-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["32","16.","32","16.","32","16.","8"]},
+    {id:122,section:"Seven-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["q","16t","16t","16t","16t","16t","16t"]},
+    {id:123,section:"Seven-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16t","16t","16t","16t","16t","16t","q"]},
+    {id:124,section:"Seven-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16t","16t","16t","q","16t","16t","16t"]},
+    {id:125,section:"Seven-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","16","16","8t","8t","8t"]},
+    {id:126,section:"Seven-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8t","8t","8t","16","16","16","16"]},
+    {id:127,section:"Seven-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["8","16t","16t","16t","16t","16t","16t"]},
+    {id:128,section:"Seven-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["16t","16t","16t","8","16t","16t","16t"]},
+    {id:129,section:"Seven-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["16t","16t","16t","16t","16t","16t","8"]},
+    {id:130,section:"Seven-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["8","16","16","32","32","32","32"]},
+    {id:131,section:"Seven-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["32","32","32","32","16","16","8"]},
+    {id:132,section:"Seven-Note Rhythm Patterns",timeSig:"3/8",beaming:"",notes:["32","32","32","32","8","16","16"]},
+    {id:133,section:"Seven-Note Rhythm Patterns",timeSig:"3/4",beaming:"",notes:["8.","16","16","8","16","16","8."]},
+    {id:134,section:"Seven-Note Rhythm Patterns",timeSig:"3/4",beaming:"4+2",notes:["16","8","8","8","16","8.","16"]},
+    {id:135,section:"Seven-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","8","8","16","16","16","16"]},
+    {id:136,section:"Seven-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["16","16","16","16","8","8","8"]},
+    {id:137,section:"Seven-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","8","16","16","8","16","16"]},
+    {id:138,section:"Seven-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","16","16","8","16","16","8"]},
+    {id:139,section:"Seven-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["16","16","8","8","8","16","16"]},
+    {id:140,section:"Seven-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["16","8","16","16","8","16","8"]},
+    {id:141,section:"Seven-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["16","8","16","8","16","8","16"]},
+    {id:142,section:"Seven-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8.","16","16","8","16","16","16"]},
+    {id:143,section:"Seven-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8.","16","8","16.","32","16.","32"]},
+    {id:144,section:"Seven-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["16.","32","16.","32","8.","16","8"]},
+    {id:145,section:"Seven-Note Rhythm Patterns",timeSig:"5/8",beaming:"5",notes:["16","8","8","8","8","32","32"]},
+    {id:146,section:"Seven-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["8.","16","8.","16","8.","16","8"]},
+    {id:147,section:"Seven-Note Rhythm Patterns",timeSig:"7/8",beaming:"3+4",notes:["8.","16","8","8.","16","8.","16"]},
+    {id:148,section:"Seven-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["8.","16","8.","16","8","8.","16"]},
+    {id:149,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16.","32","16","16","16","16","16","16"]},
+    {id:150,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["32","16.","16","16","16","16","16","16"]},
+    {id:151,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","16","16","16.","32","16","16"]},
+    {id:152,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","16","16","16","16","32","16."]},
+    {id:153,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16.","32","16","16","16","16","32","16."]},
+    {id:154,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","32","16.","16.","32","16","16"]},
+    {id:155,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","16","16","16.","32","16.","32"]},
+    {id:156,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["32","16.","32","16.","16","16","16","16"]},
+    {id:157,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16","16","16.","32","16.","32","16","16"]},
+    {id:158,section:"Eight-Note Rhythm Patterns",timeSig:"4/4",beaming:"",notes:["8.","16","8.","16","16","8.","16","8."]},
+    {id:159,section:"Eight-Note Rhythm Patterns",timeSig:"4/4",beaming:"",notes:["16","8.","16","8.","8.","16","8.","16"]},
+    {id:160,section:"Eight-Note Rhythm Patterns",timeSig:"4/4",beaming:"",notes:["8.","16","16","8.","16","8.","8.","16"]},
+    {id:161,section:"Eight-Note Rhythm Patterns",timeSig:"4/4",beaming:"",notes:["16","8.","8.","16","16","8.","8.","16"]},
+    {id:162,section:"Eight-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["8","8","16","16","16","16","8","8"]},
+    {id:163,section:"Eight-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["8","16","16","8","8","8","16","16"]},
+    {id:164,section:"Eight-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["16","16","8","8","8","16","16","8"]},
+    {id:165,section:"Eight-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["8","16","16","16","16","8.","16","8"]},
+    {id:166,section:"Eight-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["8.","16","16","16","16","16","16","8."]},
+    {id:167,section:"Eight-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["8","8.","16","16","16","16","16","8"]},
+    {id:168,section:"Eight-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["16","8","8","16","16","16","8","8"]},
+    {id:169,section:"Eight-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["16","8","8","16","8","16.","32","8"]},
+    {id:170,section:"Eight-Note Rhythm Patterns",timeSig:"6/8",beaming:"",notes:["8","8","16","16","16","8","8","16"]},
+    {id:171,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8","16t","16t","16t","16t","16t","16t","8"]},
+    {id:172,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16t","16t","16t","8","8","16t","16t","16t"]},
+    {id:173,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8","16t","16t","16t","16","16","16","16"]},
+    {id:174,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["16.","32","16.","32","16t","16t","16t","8"]},
+    {id:175,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["8t","8t","8t","8","32","32","32","32"]},
+    {id:176,section:"Eight-Note Rhythm Patterns",timeSig:"2/4",beaming:"",notes:["32","32","32","32","8","8t","8t","8t"]},
+    {id:177,section:"Eight-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","8","16","16","16","16","16","16"]},
+    {id:178,section:"Eight-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["16","16","16","16","8","16","16","8"]},
+    {id:179,section:"Eight-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["16.","32","16.","32","16.","32","8.","16"]},
+    {id:180,section:"Eight-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8.","16","16.","32","16.","32","16.","32"]},
+    {id:181,section:"Eight-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["16.","32","16.","32","8","16.","32","8"]},
+    {id:182,section:"Eight-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8","8","8","8","32","32","32","32"]},
+    {id:183,section:"Eight-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["8.","16","32","32","32","32","8.","16"]},
+    {id:184,section:"Eight-Note Rhythm Patterns",timeSig:"5/8",beaming:"",notes:["32","32","32","32","8","8.","16","8"]},
+    {id:185,section:"Eight-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["8","8","8","8","8","8","16","16"]},
+    {id:186,section:"Eight-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["8","8","8","16","16","8","8","8"]},
+    {id:187,section:"Eight-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["8.","16","8.","16","8.","16","16","16"]},
+    {id:188,section:"Eight-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["16","8","8","16","8.","16","16","8."]},
+    {id:189,section:"Eight-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["16","16","8","8","8","8.","16","8"]},
+    {id:190,section:"Eight-Note Rhythm Patterns",timeSig:"7/8",beaming:"",notes:["8.","16","8","8.","16","8","16","16"]},
+    {id:191,section:"Eight-Note Rhythm Patterns",timeSig:"8/8",beaming:"",notes:["8.","16","8.","16","8","8.","16","8"]},
+    {id:192,section:"Eight-Note Rhythm Patterns",timeSig:"8/8",beaming:"",notes:["16","8","16","q","8","8.","16","8"]},
+    {id:193,section:"Eight-Note Rhythm Patterns",timeSig:"8/8",beaming:"",notes:["8.","16","8","8.","16","8.","16","8"]},
+    {id:194,section:"Eight-Note Rhythm Patterns",timeSig:"8/8",beaming:"",notes:["16","8","8","16","q","8","8","8"]},
+  ];
+
+  // ── STATE ─────────────────────────────────────────────
+  var activeGroup = null, selNotes = [];
+  function cKey()  { return document.getElementById('key-sel').value; }
+  function cClef() { return document.getElementById('clef-sel').value; }
+
+    document.getElementById('key-sel').addEventListener('change',function(){
+    // Key affects notation only
+  });
+
+  document.querySelectorAll('.group-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.group-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeGroup = parseInt(btn.dataset.n);
+      upPrompt(); upHint(); checkReady();
+    });
+  });
+
+  function g2s(n) {
+    return {3:'Three-Note Rhythm Patterns',4:'Four-Note Rhythm Patterns',
+      5:'Five-Note Rhythm Patterns',6:'Six-Note Rhythm Patterns',
+      7:'Seven-Note Rhythm Patterns',8:'Eight-Note Rhythm Patterns'}[n] || '';
+  }
+  function upPrompt() {
+    var el = document.getElementById('kb-prompt');
+    if (!activeGroup) el.innerHTML = 'Tap notes in order — your passage will cycle through each rhythm pattern';
+    else if (!selNotes.length) el.innerHTML = 'Enter your passage';
+    else el.innerHTML = '<strong>' + selNotes.length + '</strong> note' + (selNotes.length !== 1 ? 's' : '') + ' entered';
+  }
+  function upHint() {
+    var el = document.getElementById('count-hint');
+    if (!activeGroup || !selNotes.length) { el.innerHTML = ''; return; }
+    var sec = g2s(activeGroup), ct = DB.filter(function(p) { return p.section === sec; }).length;
+    el.innerHTML = ct ? '<strong>' + selNotes.length + '</strong> pitches &middot; <strong>' + ct + '</strong> patterns' : '<span style="color:var(--accent)">No patterns for ' + sec + '</span>';
+  }
+  function checkReady() {
+    var sec = g2s(activeGroup);
+    document.getElementById('gen-btn').disabled = !(activeGroup && DB.some(function(p) { return p.section === sec; }) && selNotes.length >= 1);
+  }
+
+  // ── PIANO ─────────────────────────────────────────────
+  var PN = [];
+  ['2','3','4','5','6','7'].forEach(function(o) {
+    ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'].forEach(function(p) {
+      PN.push({name: p + o, white: p.indexOf('#') === -1});
+    });
+  });
+  PN.push({name: 'C8', white: true});
+
+  function buildPiano() {
+    var svg = document.getElementById('piano-svg');
+    var wh = PN.filter(function(n) { return n.white; });
+    var VW = 1008, VH = 130, ww = VW / wh.length, bw = ww * 0.58, bh = VH * 0.62;
+
+    wh.forEach(function(note, i) {
+      var r = mkS('rect', {x: i*ww+0.5, y: 0.5, width: ww-1, height: VH-1, rx: 2,
+        fill: '#fdfaf5', stroke: '#ccc', 'stroke-width': 0.7, 'data-note': note.name});
+      svg.appendChild(r);
+      if (note.name.charAt(0) === 'C' && note.name.indexOf('#') === -1) {
+        var t = mkS('text', {x: i*ww+ww/2, y: VH-5, 'text-anchor': 'middle', 'font-size': 6,
+          fill: '#bbb', 'font-family': 'Inconsolata,monospace', 'pointer-events': 'none'});
+        t.textContent = note.name; svg.appendChild(t);
+      }
+    });
+
+    var wi = 0;
+    PN.forEach(function(note) {
+      if (note.white) { wi++; return; }
+      svg.appendChild(mkS('rect', {x: (wi-1)*ww+ww-bw/2+ww*0.07, y: 0, width: bw, height: bh,
+        rx: 2, fill: '#1a1612', stroke: '#111', 'stroke-width': 0.5, 'data-note': note.name}));
+    });
+
+    function handlePress(e) {
+      e.preventDefault();
+      var pt;
+      if (e.changedTouches && e.changedTouches.length) {
+        pt = {x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY};
+      } else {
+        pt = {x: e.clientX, y: e.clientY};
+      }
+      var target = document.elementFromPoint(pt.x, pt.y);
+      // Walk up to find data-note
+      var k = target;
+      while (k && k !== svg) {
+        if (k.getAttribute && k.getAttribute('data-note')) break;
+        k = k.parentNode;
+      }
+      if (!k || !k.getAttribute || !k.getAttribute('data-note')) return;
+      if (!activeGroup) {
+        document.getElementById('kb-prompt').innerHTML = '<strong>Select a group size first</strong>';
+        return;
+      }
+      var raw = k.getAttribute('data-note'), isBlack = raw.indexOf('#') !== -1;
+      k.setAttribute('fill', '#c8601a');
+      setTimeout(function() { k.setAttribute('fill', isBlack ? '#1a1612' : '#fdfaf5'); }, 160);
+      var spelled = raw;
+      playNote(spelled);
+      selNotes.push(spelled);
+      updateChips(); upPrompt(); upHint(); checkReady();
+    }
+
+    svg.addEventListener('click', handlePress);
+    svg.addEventListener('touchstart', handlePress, {passive: false});
+  }
+
+  function mkS(tag, attrs) {
+    var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    Object.keys(attrs).forEach(function(k) { el.setAttribute(k, attrs[k]); });
+    return el;
+  }
+
+  function clearNotes() { selNotes = []; updateChips(); upPrompt(); upHint(); checkReady(); }
+  window.clearNotes = clearNotes;
+  function removeNote(i) { selNotes.splice(i, 1); updateChips(); upPrompt(); upHint(); checkReady(); }
+  window.removeNote = removeNote;
+  function flipNote(i) { selNotes[i] = flipEnh(selNotes[i]); updateChips(); }
+  window.flipNote = flipNote;
+
+  function updateChips() {
+    var el = document.getElementById('chips');
+    if (!selNotes.length) { el.innerHTML = '<span class="no-notes">No notes entered</span>'; return; }
+    el.innerHTML = selNotes.map(function(n, i) {
+      var cl=hasEnharm(n)?dn(flipEnh(n)).slice(0,-1):'';
+      var eb=cl?'<button class="enh" onclick="flipNote('+i+')" title="Respell (same pitch)">'+cl+'</button>':'';
+      return '<div class="chip">'+dn(n)+eb+'<button class="rm" onclick="removeNote('+i+')">&#215;</button></div>';
+    }).join('');
+  }
+
+  // ── ABC NOTATION CONVERSION ───────────────────────────
+  // Duration table: with L:1/32, each unit = 1 thirty-second note
+  var DUR32 = {'32':1,'16':2,'16.':3,'8':4,'8.':6,'q':8,'q.':12,'h':16,'h.':24,'w':32};
+
+  function codeToAbc(code, pitchName, barAcc) {
+    var dotted = code.slice(-1) === '.';
+    var rest   = code.slice(-1) === 'r';
+    var tup    = code.indexOf('t') !== -1 && !rest;
+    var base   = code.replace('.','').replace('r','').replace('t','');
+    var durKey = base + (dotted ? '.' : '');
+    var dur    = DUR32[durKey] || DUR32[base] || 4;
+
+    if (rest) return 'z' + dur;
+
+    // Convert pitch to ABC
+    var m = pitchName.match(/^([A-G])(##|bb|#|b)?(\d)$/);
+    if (!m) return 'C' + dur;
+    var pc = m[1], acc = m[2] || '', oct = parseInt(m[3]);
+
+    var prefix;
+    if(acc==='##'){
+      prefix='^^';
+      if(barAcc) barAcc[pc]='^^';
+    } else if(acc==='bb'){
+      prefix='__';
+      if(barAcc) barAcc[pc]='__';
+    } else if(acc==='#'){
+      prefix='^';
+      if(barAcc) barAcc[pc]='^';
+    } else if(acc==='b'){
+      prefix='_';
+      if(barAcc) barAcc[pc]='_';
+    } else {
+      // Natural note — check if this pitch class was altered earlier in bar
+      // or is altered by the key signature
+      var needsNatural = false;
+      if(barAcc && barAcc[pc]) {
+        needsNatural = true; // was altered earlier in this bar
+        barAcc[pc] = null;   // cancel — now natural
+      } else {
+        var ka=KEY_ACC[cKey()]||{};
+        needsNatural=Object.keys(ka).some(function(k){return ka[k]===pc+'b'||ka[k]===pc+'#';});
+      }
+      prefix = needsNatural ? '=' : '';
+    }
+
+    // ABC octave mapping: C4=C, C5=c, C6=c', C7=c'', C8=c''', C3=C,, C2=C,,,
+    var noteLetter;
+    if (oct <= 4)      { noteLetter = pc;          }  // C4 and below = uppercase
+    else               { noteLetter = pc.toLowerCase(); } // C5+ = lowercase
+
+    var octMod = '';
+    if (oct === 3)     octMod = ',';
+    else if (oct === 2) octMod = ',,';
+    else if (oct === 1) octMod = ',,,';
+    else if (oct === 6) octMod = "'";
+    else if (oct === 7) octMod = "''";
+    else if (oct === 8) octMod = "'''";
+
+    var noteStr = prefix + noteLetter + octMod + dur;
+
+    // Wrap triplet
+    if (tup) return '(3' + noteStr;  // ABCjs handles triplet bracket with (3 prefix on first note
+    return noteStr;
+  }
+
+  function buildAbcString(pat, pitches, clef) {
+    var keyMap = {'C':'C','G':'G','D':'D','A':'A','E':'E','B':'B','Fs':'F#',
+      'F':'F','Bb':'Bb','Eb':'Eb','Ab':'Ab','Db':'Db','Gb':'Gb'};
+    var abcKey = keyMap[cKey()] || 'C';
+    var abcClef = clef === 'bass' ? ' clef=bass' :
+                  clef === 'alto' ? ' clef=alto' :
+                  clef === 'tenor' ? ' clef=tenor' : '';
+    var tsN = pat.timeSig.split('/')[0];
+    var tsD = pat.timeSig.split('/')[1];
+
+    // Build note sequence — calculate exact reps needed upfront
+    // Count non-rest slots per rep
+    var pitchedPerRep = 0;
+    for (var ni = 0; ni < pat.notes.length; ni++) {
+      var c = pat.notes[ni];
+      if (c.slice(-1) !== 'r') pitchedPerRep++;
+    }
+    // How many complete reps do we need to cover all pitches?
+    var repsNeeded = pitchedPerRep > 0 ? Math.ceil(pitches.length / pitchedPerRep) : 1;
+    repsNeeded = Math.min(repsNeeded, 32); // safety cap
+
+    var pi = 0;
+    var bars = [];
+    for (var rep = 0; rep < repsNeeded; rep++) {
+      var barNotes = [];
+      for (var ni = 0; ni < pat.notes.length; ni++) {
+        var code = pat.notes[ni];
+        var isRest = code.slice(-1) === 'r';
+        var isTup  = code.indexOf('t') !== -1 && !isRest;
+        // For pitched slots: use pitch at pi, stop adding pitched notes after last pitch
+        var pitch = null;
+        if (!isRest) {
+          if (pi < pitches.length) {
+            pitch = pitches[pi];
+            pi++;
+          } else {
+            // No more pitches — skip remaining slots in this rep
+            break;
+          }
+        }
+        barNotes.push({code:code, pitch:pitch, isRest:isRest, isTup:isTup});
+      }
+      if (barNotes.length) bars.push(barNotes);
+    }
+
+    // Beat boundaries per time signature (in 32nd-note units from bar start)
+    // Space is inserted AFTER any note that lands on or crosses a beat boundary
+    var BEAT_BOUNDS = {
+      '2/8':[4], '3/8':[4,8], '2/4':[8], '3/4':[8,16], '4/4':[8,16,24],
+      '6/8':[12], '9/8':[12,24], '12/8':[12,24,36],
+      '5/8':[8], '7/8':[8,16], '8/8':[8,16,24],
+      '5/16':[4], '7/16':[4,8],
+      '3/2':[16,32], '5/4':[8,16,24,32]
+    };
+
+    // Beaming override conventions:
+    //   blank  → use automatic beat-boundary lookup
+    //   "0"    → no beaming: all notes separated (beatBounds = every position)
+    //   "4"    → single number: beam whole bar as one group (no internal boundaries)
+    //   "2+3"  → explicit groups in eighth-note units → convert to 32nd-note boundaries
+    var beatBounds;
+    if (pat.beaming && pat.beaming.trim().length > 0) {
+      var beamStr = pat.beaming.trim();
+      if (beamStr === '0') {
+        // No beaming — set boundaries at every 32nd-note position (force space after every note)
+        beatBounds = 'none';
+      } else if (beamStr.indexOf('+') === -1) {
+        // Single number — beam whole bar, no internal boundaries
+        beatBounds = [];
+      } else {
+        // x+y+z format — convert to cumulative 32nd-note boundaries
+        var groups = beamStr.split('+');
+        var cum = 0;
+        beatBounds = [];
+        for (var gi = 0; gi < groups.length - 1; gi++) {
+          cum += parseInt(groups[gi]) * 4; // eighth-note units × 4 = 32nd-note units
+          beatBounds.push(cum);
+        }
+      }
+    } else {
+      beatBounds = BEAT_BOUNDS[pat.timeSig] || [8];
+    }
+
+    function noteDur32(code) {
+      var D={'32':1,'16':2,'16.':3,'8':4,'8.':6,'q':8,'q.':12,'h':16,'h.':24,'w':32};
+      var dotted=code.indexOf('.')!==-1&&code.slice(-1)!=='r';
+      var tup=code.indexOf('t')!==-1&&code.slice(-1)!=='r';
+      var base=code.replace('.','').replace('r','').replace('t','');
+      var key=base+(dotted?'.':'');
+      var v=D[key]||D[base]||0;
+      if(tup) v*=2/3;
+      return v;
+    }
+
+    // Convert each bar to ABC string with beat-aware beaming
+    var barStrings = bars.map(function(bar) {
+      var tokens = [];
+      var cum = 0;
+      var i = 0;
+      // Track accidentals seen so far in this bar: pitchClass -> '^', '_', '^^', '__'
+      // Any natural note whose pitch class was altered must get '=' explicitly
+      var barAcc = {};
+
+      while (i < bar.length) {
+        var item = bar[i];
+        var code = item.code;
+        var isRest = item.isRest;
+        var isTup  = item.isTup;
+        var base   = code.replace('.','').replace('r','').replace('t','');
+        var canBeam = (base==='8'||base==='16'||base==='32') && !isRest;
+        var d = noteDur32(code);
+        var cumAfter = cum + d;
+
+        if (isTup) {
+          // Consume all 3 triplet notes — always isolated from surrounding beams
+          var tripStr = '(3';
+          while (i < bar.length && bar[i].isTup) {
+            tripStr += codeToAbc(bar[i].code, bar[i].pitch, barAcc);
+            cum += noteDur32(bar[i].code);
+            i++;
+          }
+          tokens.push(tripStr + ' ');
+
+        } else {
+          var abcNote = codeToAbc(code, item.pitch, barAcc);
+
+          // Force space if this note lands on OR crosses a beat boundary
+          // beatBounds === 'none' means no beaming at all (every note separated)
+          var forceSpace;
+          if (beatBounds === 'none') {
+            forceSpace = true; // always separate
+          } else {
+            var landsBeat = beatBounds.some(function(b){ return b === cumAfter; });
+            var crossBeat = beatBounds.some(function(b){ return cum < b && b < cumAfter; });
+            forceSpace = landsBeat || crossBeat;
+          }
+
+          if (forceSpace) {
+            tokens.push(abcNote + ' ');
+          } else {
+            // Beam with next only if next is also beamable, non-triplet, non-rest
+            var nextItem = bar[i+1];
+            var nextBase = nextItem ? nextItem.code.replace('.','').replace('r','').replace('t','') : '';
+            var nextBeam = canBeam && nextItem && !nextItem.isRest && !nextItem.isTup &&
+                           (nextBase==='8'||nextBase==='16'||nextBase==='32');
+            tokens.push(nextBeam ? abcNote : abcNote + ' ');
+          }
+
+          cum = cumAfter;
+          i++;
+        }
+      }
+      return tokens.join('').trim();
+    });
+
+    var abc = 'X:1\n' +
+              'M:' + tsN + '/' + tsD + '\n' +
+              'L:1/32\n' +
+              'K:' + abcKey + abcClef + '\n' +
+              barStrings.map(function(b) { return '|' + b; }).join('') + '||';
+    return abc;
+  }
+
+  // ── GENERATE ──────────────────────────────────────────
+  document.getElementById('gen-btn').addEventListener('click', function() {
+    var clef = cClef(), sec = g2s(activeGroup);
+    var pats = DB.filter(function(p) { return p.section === sec; });
+
+    document.getElementById('sheet-title').textContent = sec;
+    var exCont = document.getElementById('exercises');
+    exCont.innerHTML = '';
+
+    pats.forEach(function(p, i) {
+      var row = document.createElement('div');
+      row.className = 'ex-row';
+      // Label sits above the stave div — outside ABCjs's target
+      var idLabel = document.createElement('div');
+      idLabel.className = 'ex-id-label';
+      idLabel.textContent = '#' + p.id + '  ·  ' + p.timeSig + (p.beaming ? '  ·  [' + p.beaming + ']' : '');
+      row.appendChild(idLabel);
+      // ABCjs renders into this inner div only
+      var staveDiv = document.createElement('div');
+      staveDiv.id = 'ex-' + i;
+      row.appendChild(staveDiv);
+      exCont.appendChild(row);
+
+      try {
+        var abc = buildAbcString(p, selNotes.slice(), clef);
+        ABCJS.renderAbc('ex-' + i, abc, {
+          scale: 1.2,
+          paddingright: 30,
+          paddingleft: 15,
+          paddingbottom: 10,
+          paddingtop: 10,
+          add_classes: true,
+          staffwidth: 880,
+          wrap: {minSpacing: 1.8, maxSpacing: 2.8, preferredMeasuresPerLine: 4},
+        });
+      } catch(e) {
+        row.innerHTML = '<div style="color:var(--accent);font-family:monospace;font-size:.7rem;padding:6px">Error: ' + e.message + '</div>';
+        console.error(p.id, e);
+      }
+    });
+
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('sheet-wrap').style.display = 'block';
+    document.getElementById('export-bar').classList.add('visible');
+  });
+
+  // ── PDF EXPORT ────────────────────────────────────────
+;
+
+  // ── SETTINGS ──────────────────────────────────────────
+  function openHelp()  { document.getElementById('help-overlay').classList.add('open'); }
+  function closeHelp() { document.getElementById('help-overlay').classList.remove('open'); }
+  function outsideCloseHelp(e) { if(e.target===document.getElementById('help-overlay')) closeHelp(); }
+  window.openHelp=openHelp; window.closeHelp=closeHelp; window.outsideCloseHelp=outsideCloseHelp;
+
+  function openSettings()  { document.getElementById('settings-overlay').classList.add('open'); updateStats(); }
+  function closeSettings() { document.getElementById('settings-overlay').classList.remove('open'); }
+  function outsideClose(e) { if (e.target === document.getElementById('settings-overlay')) closeSettings(); }
+  window.openSettings = openSettings; window.closeSettings = closeSettings; window.outsideClose = outsideClose;
+
+  function updateStats() {
+    var secs = [];
+    DB.forEach(function(p) { if (secs.indexOf(p.section) === -1) secs.push(p.section); });
+    document.getElementById('db-stats').innerHTML = secs.map(function(s) {
+      return '<strong>' + DB.filter(function(p) { return p.section === s; }).length + '</strong> patterns — ' + s;
+    }).join('<br>') || 'No patterns loaded';
+  }
+
+  document.getElementById('csv-input').addEventListener('change', function(e) {
+    var f = e.target.files[0]; if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var pats = parseCSV(ev.target.result);
+      if (pats.length) {
+        DB = pats;
+        document.getElementById('upload-zone').classList.add('loaded');
+        document.getElementById('uz-lbl').textContent = f.name + ' — ' + pats.length + ' patterns';
+        updateStats(); checkReady();
+      }
+    };
+    reader.readAsText(f);
+  });
+
+  function parseCSV(text) {
+    var lines = text.trim().split('\n').filter(function(l) { return l.trim(); });
+    var hdrs = lines[0].split(',').map(function(h) { return h.trim().toLowerCase(); });
+    var tsIdx = -1; hdrs.forEach(function(h, i) { if (h.indexOf('time') !== -1) tsIdx = i; });
+    // Detect optional Beaming column immediately after Time Sig
+    var beamIdx = -1;
+    if (hdrs[tsIdx + 1] && hdrs[tsIdx + 1].indexOf('beam') !== -1) {
+      beamIdx = tsIdx + 1;
+    }
+    var nIdx = beamIdx !== -1 ? beamIdx + 1 : tsIdx + 1;
+    return lines.slice(1).map(function(line, i) {
+      var cols = csvSplit(line); if (!cols[1] || !cols[2]) return null;
+      var notes = cols.slice(nIdx).map(function(n) { return n.trim(); }).filter(function(n) { return n; });
+      if (!notes.length) return null;
+      var beaming = beamIdx !== -1 ? cols[beamIdx].trim() : '';
+      return {id: cols[0] ? parseInt(cols[0]) : i+1, section: cols[1].trim(),
+              timeSig: cols[2].trim(), beaming: beaming, notes: notes};
+    }).filter(Boolean);
+  }
+
+  function csvSplit(line) {
+    var r = [], c = '', q = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if (ch === '"') { q = !q; continue; }
+      if (ch === ',' && !q) { r.push(c); c = ''; continue; }
+      c += ch;
+    }
+    r.push(c); return r;
+  }
+
+  // ── PDF OVERLAY ──────────────────────────────────────
+  function closePdfOverlay() {
+    var overlay = document.getElementById('pdf-overlay');
+    if (overlay) overlay.classList.remove('open');
+    var frame = document.getElementById('pdf-frame');
+    if (frame) frame.src = 'about:blank';
+  }
+  window.closePdfOverlay = closePdfOverlay;
+
+  // ── FULLSCREEN VIEWER ────────────────────────────────
+  document.getElementById('fullscreen-btn').addEventListener('click', function() {
+    var sec = g2s(activeGroup);
+    document.getElementById('fs-title').textContent = sec;
+
+    // Clone all exercise rows into fullscreen content
+    var fsCont = document.getElementById('fs-content');
+    fsCont.innerHTML = '';
+
+    // Re-render exercises at larger scale into fullscreen div
+    var pats = DB.filter(function(p) { return p.section === sec; });
+    var clef = cClef();
+
+    pats.forEach(function(p, i) {
+      var row = document.createElement('div');
+      row.className = 'fs-ex-row';
+      var idLabelFs = document.createElement('div');
+      idLabelFs.className = 'ex-id-label';
+      idLabelFs.textContent = '#' + p.id + '  ·  ' + p.timeSig + (p.beaming ? '  ·  [' + p.beaming + ']' : '');
+      row.appendChild(idLabelFs);
+      var staveDivFs = document.createElement('div');
+      staveDivFs.id = 'fs-ex-' + i;
+      row.appendChild(staveDivFs);
+      fsCont.appendChild(row);
+      try {
+        var abc = buildAbcString(p, selNotes.slice(), clef);
+        ABCJS.renderAbc('fs-ex-' + i, abc, {
+          scale: 1.6,
+          paddingright: 20,
+          paddingleft: 10,
+          paddingbottom: 8,
+          paddingtop: 8,
+          add_classes: true,
+          staffwidth: Math.min(window.innerWidth - 40, 900),
+          wrap: {minSpacing: 2.0, maxSpacing: 3.5, preferredMeasuresPerLine: 4},
+        });
+      } catch(e) {}
+    });
+
+    document.getElementById('fs-overlay').classList.add('open');
+  });
+
+  function closeFullscreen() {
+    document.getElementById('fs-overlay').classList.remove('open');
+  }
+  window.closeFullscreen = closeFullscreen;
+
+  // Start Over — reset all state
+  document.getElementById('start-over-btn').addEventListener('click', function() {
+    // Clear notes
+    selNotes = [];
+    updateChips(); upPrompt(); upHint(); checkReady();
+
+    // Clear group selection
+    activeGroup = null;
+    document.querySelectorAll('.group-btn').forEach(function(b) { b.classList.remove('active'); });
+
+    // Hide exercises and export bar
+    document.getElementById('empty-state').style.display = '';
+    document.getElementById('sheet-wrap').style.display = 'none';
+    document.getElementById('export-bar').classList.remove('visible');
+    document.getElementById('exercises').innerHTML = '';
+
+    // Reset clef/key/instrument to defaults
+    document.getElementById('clef-sel').selectedIndex = 0;
+    document.getElementById('key-sel').selectedIndex = 0;
+    document.getElementById('instrument-sel').selectedIndex = 1;
+
+    // Scroll back to top
+    window.scrollTo(0, 0);
+  });
+
+  // ── PLAY PASSAGE ─────────────────────────────────────
+  function playPassage() {
+    if (!selNotes.length) return;
+    var btn = document.getElementById('play-btn');
+    btn.classList.add('playing');
+
+    var noteDuration = 0.45; // seconds per note
+    var gap = 0.08;          // gap between notes
+
+    selNotes.forEach(function(note, i) {
+      setTimeout(function() {
+        playNote(note);
+        // Flash the corresponding chip
+        var chips = document.querySelectorAll('.chip');
+        if (chips[i]) {
+          chips[i].style.background = '#c8601a';
+          setTimeout(function() {
+            chips[i].style.background = '';
+          }, 300);
+        }
+      }, i * (noteDuration + gap) * 1000);
+    });
+
+    // Re-enable button after all notes have played
+    setTimeout(function() {
+      btn.classList.remove('playing');
+    }, selNotes.length * (noteDuration + gap) * 1000 + 200);
+  }
+  window.playPassage = playPassage;
+
+  // ── ORIENTATION ───────────────────────────────────────
+  function checkOrientation() {
+    // Only prompt on phones (narrow screens) — iPad portrait is fine
+    var isPhone = window.screen.width <= 430 || window.screen.height <= 430;
+    var isPortrait = window.innerHeight > window.innerWidth;
+    var isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    var overlay = document.getElementById('rotate-overlay');
+    if (overlay) overlay.style.display = (isTouchDevice && isPhone && isPortrait) ? 'flex' : 'none';
+  }
+
+  // ── INIT ──────────────────────────────────────────────
+  b
