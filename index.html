@@ -1113,8 +1113,6 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
         svgs.push(s);
       }
     }
-    var win = window.open('', '_blank');
-    if (!win) { alert('Please allow popups to export PDF'); return; }
     var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
       + '<title>' + title + '</title>'
       + '<style>'
@@ -1127,10 +1125,25 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
       + '</style></head><body>'
       + '<h1>' + title + '</h1>';
     svgs.forEach(function(s){html+='<div class="row">'+s+'</div>';});
-    html += '<scr'+'ipt>window.onload=function(){window.print();}</'+'script>';
     html += '</body></html>';
-    win.document.write(html);
-    win.document.close();
+    // Use hidden iframe so we stay on the app page
+    var old = document.getElementById('print-frame');
+    if (old) old.parentNode.removeChild(old);
+    var frame = document.createElement('iframe');
+    frame.id = 'print-frame';
+    frame.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:800px;height:600px;border:none;visibility:hidden';
+    document.body.appendChild(frame);
+    frame.contentDocument.open();
+    frame.contentDocument.write(html);
+    frame.contentDocument.close();
+    setTimeout(function() {
+      frame.contentWindow.focus();
+      frame.contentWindow.print();
+      setTimeout(function() {
+        var f = document.getElementById('print-frame');
+        if (f) f.parentNode.removeChild(f);
+      }, 3000);
+    }, 500);
   }
   window.doExport=doExport;
 
