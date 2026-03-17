@@ -244,15 +244,21 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 }
 
 @media print {
-  .topbar,.controls,.export-bar,.settings-overlay,.rotate-overlay,.empty-state,.play-btn,.gen-btn,.fs-overlay{display:none!important}
-  body{background:white!important;color:black!important}
-  .output-area{background:white!important;padding:8px!important}
-  .sheet{box-shadow:none!important;padding:12px!important;max-width:100%!important;background:white!important}
-  .sheet-title{font-size:15pt!important;border-bottom:1.5pt solid black!important;color:black!important}
-  .ex-row{page-break-inside:avoid;margin-bottom:2px!important}
-  .ex-id-label{display:block!important;font-family:monospace;font-size:7pt;color:#999;margin-bottom:1px}
-  .ex-row svg{width:100%!important}
-  .ex-row svg path,.ex-row svg rect,.ex-row svg ellipse,.ex-row svg circle,.ex-row svg polygon,.ex-row svg line,.ex-row svg text{fill:black!important;stroke:black!important}
+  .topbar,.controls,.export-bar,.settings-overlay,.rotate-overlay,.empty-state,.play-btn,.gen-btn { display:none!important }
+  body { background:white!important; color:black!important }
+  .output-area { background:white!important; padding:8px!important }
+  .sheet { box-shadow:none!important; padding:12px!important; max-width:100%!important; background:white!important }
+  .sheet-title { font-size:15pt!important; border-bottom:1.5pt solid black!important; color:black!important }
+  .ex-row { page-break-inside:avoid; margin-bottom:2px!important }
+  .ex-row svg { width:100%!important }
+  .ex-row svg path,.ex-row svg rect,.ex-row svg ellipse,.ex-row svg circle,.ex-row svg polygon,.ex-row svg line,.ex-row svg text { fill:black!important; stroke:black!important }
+  /* Fullscreen print support */
+  .fs-overlay:not(.open) { display:none!important }
+  .fs-overlay.open { display:block!important; position:static!important; background:white!important; overflow:visible!important }
+  .fs-topbar { display:none!important }
+  .fs-content { padding:8px!important }
+  .fs-ex-row svg { width:100%!important }
+  .fs-ex-row svg path,.fs-ex-row svg rect,.fs-ex-row svg ellipse,.fs-ex-row svg circle,.fs-ex-row svg polygon,.fs-ex-row svg line,.fs-ex-row svg text { fill:black!important; stroke:black!important }
 }
 </style>
 </head>
@@ -341,7 +347,11 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     <div class="chips-row" id="chips"><span class="no-notes">No notes entered</span></div>
     <div class="count-hint" id="count-hint"></div>
     <button class="play-btn" id="play-btn" onclick="playPassage()">&#9654; Play Passage</button>
-    <button class="gen-btn" id="gen-btn" disabled style="margin-top:12px">Generate Exercises</button>
+    <div style="margin-top:10px">
+      <div class="ctl-label" style="margin-bottom:4px">Document Name</div>
+      <input id="doc-name" type="text" placeholder="e.g. Brahms mvt 1" style="width:100%;background:#1a1410;border:1px solid #333;color:var(--cream);padding:7px 10px;font-family:'Inconsolata',monospace;font-size:0.82rem;outline:none;box-sizing:border-box">
+    </div>
+    <button class="gen-btn" id="gen-btn" disabled style="margin-top:8px">Generate Exercises</button>
   </div>
 </div>
 
@@ -356,7 +366,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 <div class="output-area" id="output-area">
   <div class="empty-state" id="empty-state">
     <div class="empty-clef">𝄞</div>
-    <div class="empty-p">Select a group &middot; enter your passage &middot; generate</div>
+    <div class="empty-p">Select a group · enter your passage · generate</div>
   </div>
   <div id="sheet-wrap" style="display:none">
     <div class="sheet" id="sheet">
@@ -370,6 +380,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 <div class="fs-overlay" id="fs-overlay">
   <div class="fs-topbar">
     <div class="fs-title" id="fs-title">Exercises</div>
+    <button class="fs-close" onclick="window.print()" style="border-color:var(--accent);color:var(--accent)">Print / Save PDF</button>
     <button class="fs-close" onclick="closeFullscreen()">&#215; Close</button>
   </div>
   <div class="fs-content" id="fs-content"></div>
@@ -379,12 +390,12 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 <div class="settings-overlay" id="help-overlay" onclick="outsideCloseHelp(event)">
   <div class="settings-panel">
     <div class="sp-h2">How to Use <button class="close-btn" onclick="closeHelp()">&#x2715;</button></div>
-    <div class="sp-sec"><div class="sp-h3">What is this?</div><div class="sp-p">Mixed Up Rhythms is a rhythm practice tool for working musicians and serious students. Enter a melodic passage from a piece you are working on, and the app generates that passage written in every rhythm pattern for a given group size &mdash; a complete systematic workout in all rhythms.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 1 &mdash; Choose a rhythm group size</div><div class="sp-p">Select how many notes are in each rhythm pattern: 3, 4, 5, 6, 7, or 8. Start with 3 or 4 if you are new to the system.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 2 &mdash; Set clef, key, and instrument</div><div class="sp-p">Choose the clef your instrument reads in and the key of your passage. The instrument setting transposes the audio preview to concert pitch &mdash; so if you play B&#x266d; clarinet, what you hear matches what you sound.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 3 &mdash; Enter your passage</div><div class="sp-p">Tap notes on the keyboard in order. Each note appears as a chip. Tap a chip's spelling button to cycle enharmonics (e.g. F &#x2192; E&#x266f;). Tap &#x2715; to remove a note. Use <strong>&#x25BA; Play Passage</strong> to hear your entry back.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 4 &mdash; Generate</div><div class="sp-p">Tap <strong>Generate Exercises</strong> to produce the full set of rhythm patterns. Use <strong>&#x26F6; Full Screen</strong> to expand the notation on a tablet, or <strong>Print / Save PDF</strong> to export.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Tips</div><div class="sp-p">&mdash; Your passage plays once through each pattern, stopping when all notes are used.<br>&mdash; Any passage length works &mdash; a few notes or an entire phrase.<br>&mdash; Tap <strong>&#x21BB; Start Over</strong> to reset and begin a new passage.</div></div>
+    <div class="sp-sec"><div class="sp-h3">What is this?</div><div class="sp-p">Mixed Up Rhythms is a rhythm practice tool for working musicians and serious students. Enter a melodic passage from a piece you are working on, and the app generates that passage written in every rhythm pattern for a given group size — a complete systematic workout in all rhythms.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 1 — Choose a rhythm group size</div><div class="sp-p">Select how many notes are in each rhythm pattern: 3, 4, 5, 6, 7, or 8. Start with 3 or 4 if you are new to the system.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 2 — Set clef, key, and instrument</div><div class="sp-p">Choose the clef your instrument reads in and the key of your passage. The instrument setting transposes the audio preview to concert pitch — so if you play B♭ clarinet, what you hear matches what you sound.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 3 — Name and enter your passage</div><div class="sp-p">Type a document name (e.g. the piece you are working on), then tap notes on the keyboard in order. Tap a chip's spelling button to cycle enharmonics (e.g. F → E♯). Tap ✕ to remove a note. Use <strong>► Play Passage</strong> to hear your entry back.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 4 — Generate</div><div class="sp-p">Tap <strong>Generate Exercises</strong> to produce the full set of rhythm patterns. Use <strong>⛶ Full Screen</strong> to expand the notation on a tablet. Use <strong>Print / Save PDF</strong> to export from either view.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Tips</div><div class="sp-p">— Your passage plays once through each pattern, stopping when all notes are used.<br>— Any passage length works — a few notes or an entire phrase.<br>— Tap <strong>↻ Start Over</strong> to reset and begin a new passage.</div></div>
     <div class="sp-sec"><div class="sp-h3">About</div><div class="sp-p">Created by Ralph Skiano, Principal Clarinet of the Detroit Symphony Orchestra.<br><br><a href="mailto:rdskiano@gmail.com" style="color:var(--accent)">rdskiano@gmail.com</a></div></div>
   </div>
 </div>
@@ -719,7 +730,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   }
   function upPrompt() {
     var el = document.getElementById('kb-prompt');
-    if (!activeGroup) el.innerHTML = 'Tap notes in order &mdash; your passage cycles through each rhythm pattern';
+    if (!activeGroup) el.innerHTML = 'Tap notes in order — your passage cycles through each rhythm pattern';
     else if (!selNotes.length) el.innerHTML = 'Enter your passage';
     else el.innerHTML = '<strong>' + selNotes.length + '</strong> note' + (selNotes.length !== 1 ? 's' : '') + ' entered';
   }
@@ -1056,7 +1067,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     var clef = cClef(), sec = g2s(activeGroup);
     var pats = DB.filter(function(p) { return p.section === sec; });
 
-    document.getElementById('sheet-title').textContent = sec;
+    var docName = document.getElementById('doc-name').value.trim();
+    document.getElementById('sheet-title').textContent = docName ? docName + ' — ' + sec : sec;
     var exCont = document.getElementById('exercises');
     exCont.innerHTML = '';
 
@@ -1177,7 +1189,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   // ── FULLSCREEN VIEWER ────────────────────────────────
   document.getElementById('fullscreen-btn').addEventListener('click', function() {
     var sec = g2s(activeGroup);
-    document.getElementById('fs-title').textContent = sec;
+    var fsDocName = document.getElementById('doc-name').value.trim();
+    document.getElementById('fs-title').textContent = fsDocName ? fsDocName + ' — ' + sec : sec;
 
     // Clone all exercise rows into fullscreen content
     var fsCont = document.getElementById('fs-content');
