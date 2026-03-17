@@ -1077,7 +1077,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
           paddingtop: 4,
           add_classes: true,
           staffwidth: 720,
-          wrap: {minSpacing: 1.8, maxSpacing: 4.0, preferredMeasuresPerLine: 8},
+          wrap: {minSpacing: 1.8, maxSpacing: 2.8, preferredMeasuresPerLine: 4},
         });
       } catch(e) {
         row.innerHTML = '<div style="color:var(--accent);font-family:monospace;font-size:.7rem;padding:6px">Error: ' + e.message + '</div>';
@@ -1237,7 +1237,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
           paddingtop: 6,
           add_classes: true,
           staffwidth: Math.min(window.innerWidth - 40, 900),
-          wrap: {minSpacing: 2.0, maxSpacing: 4.0, preferredMeasuresPerLine: 8},
+          wrap: {minSpacing: 2.0, maxSpacing: 3.5, preferredMeasuresPerLine: 4},
         });
       } catch(e) {}
     });
