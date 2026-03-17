@@ -93,6 +93,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 .export-bar.visible { display: flex; }
 .export-label { font-family: 'Inconsolata', monospace; font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: #666; white-space: nowrap; }
 
+.export-pdf-btn { background: var(--accent); color: white; border: none; padding: 8px 18px; font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap; }
+.export-pdf-btn:hover { background: #a04520; }
 .export-btn { background: var(--accent); color: white; border: none; padding: 8px 20px; font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; letter-spacing: 0.12em; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
 .export-btn:hover { background: #a04520; }
 
@@ -210,6 +212,26 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   font-size: 0.95rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap;
 }
 .fullscreen-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Print overlay */
+.print-overlay { display:none; position:fixed; inset:0; z-index:500; background:white; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.print-overlay.open { display:block; }
+.print-toolbar { position:sticky; top:0; background:#1a1612; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; border-bottom:3px solid #8b3a1a; z-index:10; }
+.print-toolbar-title { font-family:'Bebas Neue',sans-serif; font-size:0.95rem; letter-spacing:0.12em; color:#f5f0e8; flex:1; }
+.print-toolbar-btns { display:flex; gap:8px; }
+.print-action-btn { background:#8b3a1a; color:white; border:none; padding:8px 16px; font-family:'Bebas Neue',sans-serif; font-size:0.85rem; letter-spacing:0.1em; cursor:pointer; white-space:nowrap; }
+.print-close-btn { background:none; border:1px solid #555; color:#aaa; padding:8px 14px; font-family:'Bebas Neue',sans-serif; font-size:0.85rem; letter-spacing:0.1em; cursor:pointer; }
+.print-content { padding:24px 32px 60px; max-width:760px; margin:0 auto; }
+.print-content h1 { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:0.1em; color:#1a1612; border-bottom:2px solid #1a1612; padding-bottom:8px; margin-bottom:12px; }
+.print-row { margin-bottom:2px; overflow:visible; page-break-inside:avoid; break-inside:avoid; }
+.print-row svg { display:block; width:100%; height:auto; overflow:visible; }
+.print-row svg path, .print-row svg rect, .print-row svg ellipse, .print-row svg circle, .print-row svg polygon, .print-row svg line, .print-row svg text { fill:black!important; stroke:black!important; }
+@media print {
+  .print-toolbar { display:none!important; }
+  .print-overlay { display:block!important; position:static!important; overflow:visible!important; }
+  .print-content { padding:0!important; }
+  body > *:not(.print-overlay) { display:none!important; }
+}
 
 /* Settings panel */
 .settings-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; justify-content: flex-end; }
@@ -337,7 +359,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 <!-- Export bar (shown after generate) -->
 <div class="export-bar" id="export-bar">
   <button class="fullscreen-btn" id="fullscreen-btn">&#x26F6; Full Screen</button>
-  <button class="fullscreen-btn" onclick="doExport()">Export / Print PDF</button>
+  <button class="export-pdf-btn" onclick="doExport()">&#x1F5A8; Export / Print PDF</button>
   <button class="start-over-btn" id="start-over-btn">&#8635; Start Over</button>
 </div>
 
@@ -359,7 +381,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 <div class="fs-overlay" id="fs-overlay">
   <div class="fs-topbar">
     <div class="fs-title" id="fs-title">Exercises</div>
-    <button class="fs-close" onclick="doExport()" style="border-color:var(--accent);color:var(--accent)">Export / Print PDF</button>
+    <button class="export-pdf-btn" onclick="doExport()">&#x1F5A8; Export / Print PDF</button>
     <button class="fs-close" onclick="closeFullscreen()">&#215; Close</button>
   </div>
   <div class="fs-content" id="fs-content"></div>
@@ -377,6 +399,18 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     <div class="sp-sec"><div class="sp-h3">Tips</div><div class="sp-p">— Your passage plays once through each pattern, stopping when all notes are used.<br>— Any passage length works — a few notes or an entire phrase.<br>— Tap <strong>&#x21BB; Start Over</strong> to reset and begin a new passage.</div></div>
     <div class="sp-sec"><div class="sp-h3">About</div><div class="sp-p">Created by Ralph Skiano, Principal Clarinet of the Detroit Symphony Orchestra.<br><br><a href="/cdn-cgi/l/email-protection#5e2c3a2d35373f30311e39333f3732703d3133" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="91e3f5e2faf8f0fffed1f6fcf0f8fdbff2fefc">[email&#160;protected]</span></a></div></div>
   </div>
+</div>
+
+<!-- Print overlay -->
+<div class="print-overlay" id="print-overlay">
+  <div class="print-toolbar">
+    <div class="print-toolbar-title" id="print-overlay-title">Exercises</div>
+    <div class="print-toolbar-btns">
+      <button class="print-action-btn" onclick="window.print()">Print / Save PDF</button>
+      <button class="print-close-btn" onclick="closePrintOverlay()">&#x2715; Close</button>
+    </div>
+  </div>
+  <div class="print-content" id="print-content"></div>
 </div>
 
 <!-- Settings -->
@@ -1103,43 +1137,33 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     var sec = g2s(activeGroup);
     var docName = document.getElementById('doc-name').value.trim();
     var title = docName ? docName + ' — ' + sec : sec;
+    // Set overlay title
+    document.getElementById('print-overlay-title').textContent = title;
+    // Collect and inject SVGs into print overlay
+    var cont = document.getElementById('print-content');
+    cont.innerHTML = '<h1>' + title + '</h1>';
     var rows = document.querySelectorAll('.ex-row');
-    var svgs = [];
     for (var i=0; i<rows.length; i++) {
       var svg = rows[i].querySelector('svg');
       if (svg) {
         var s = new XMLSerializer().serializeToString(svg);
         s = s.replace(/ height="[^"]*"/i, ' height="auto"');
-        svgs.push(s);
+        var div = document.createElement('div');
+        div.className = 'print-row';
+        div.innerHTML = s;
+        cont.appendChild(div);
       }
     }
-    var appUrl = window.location.href;
-    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
-      + '<meta name="viewport" content="width=device-width,initial-scale=1">'
-      + '<title>' + title + '</title>'
-      + '<style>'
-      + '@page{margin:0.5in}'
-      + 'body{font-family:sans-serif;margin:0;background:white;color:black}'
-      + '.back{display:block;padding:10px 16px;background:#8b3a1a;color:white;font-family:sans-serif;font-size:13px;text-decoration:none;letter-spacing:0.05em;margin-bottom:12px}'
-      + '@media print{.back{display:none}}'
-      + 'h1{font-size:13pt;border-bottom:1pt solid black;padding-bottom:5px;margin-bottom:8px;font-weight:bold}'
-      + '.row{page-break-inside:avoid;break-inside:avoid;margin-bottom:2px;overflow:visible}'
-      + 'svg{display:block;width:680px;height:auto;overflow:visible}'
-      + 'svg path,svg rect,svg ellipse,svg circle,svg polygon,svg line,svg text{fill:black!important;stroke:black!important}'
-      + '</style></head><body>'
-      + '<a class="back" href="' + appUrl + '">← Back to Mixed Up Rhythms</a>'
-      + '<h1>' + title + '</h1>';
-    svgs.forEach(function(s){html+='<div class="row">'+s+'</div>';});
-    html += '</body></html>';
-    var win = window.open('', '_blank');
-    if (win) {
-      win.document.write(html);
-      win.document.close();
-    } else {
-      alert('Please allow popups for this site to export PDF.');
-    }
+    // Show overlay
+    document.getElementById('print-overlay').classList.add('open');
+    window.scrollTo(0, 0);
+  }
+  function closePrintOverlay() {
+    document.getElementById('print-overlay').classList.remove('open');
+    document.getElementById('print-content').innerHTML = '';
   }
   window.doExport=doExport;
+  window.closePrintOverlay=closePrintOverlay;
 
   function openSettings()  { document.getElementById('settings-overlay').classList.add('open'); updateStats(); }
   function closeSettings() { document.getElementById('settings-overlay').classList.remove('open'); }
