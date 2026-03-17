@@ -233,7 +233,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
 <div class="topbar">
   <div style="display:flex;flex-direction:column;gap:1px"><div class="app-title">Mixed Up Rhythms</div><div style="font-family:'Inconsolata',monospace;font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;color:#aaa">Rhythm Pattern Generator</div></div>
-  <div style="display:flex;gap:8px"><button class="settings-btn" onclick="openHelp()" title="How to use">?</button><button class="settings-btn" onclick="openSettings()" title="Database Settings">⚙</button></div>
+  <button class="settings-btn" onclick="openHelp()" title="How to use">?</button>
 </div>
 
 <div class="controls">
@@ -331,6 +331,20 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   </div>
 </div>
 
+
+<!-- Help overlay -->
+<div class="settings-overlay" id="help-overlay" onclick="outsideCloseHelp(event)">
+  <div class="settings-panel">
+    <div class="sp-h2">How to Use <button class="close-btn" onclick="closeHelp()">&#x2715;</button></div>
+    <div class="sp-sec"><div class="sp-h3">What is this?</div><div class="sp-p">Mixed Up Rhythms is a rhythm practice tool for working musicians and serious students. Enter a melodic passage from a piece you are working on, and the app generates that passage written in every rhythm pattern for a given group size — a complete systematic workout in all rhythms.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 1 — Choose a rhythm group size</div><div class="sp-p">Select how many notes are in each rhythm pattern: 3, 4, 5, 6, 7, or 8. Start with 3 or 4 if you are new to the system.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 2 — Set clef, key, and instrument</div><div class="sp-p">Choose the clef your instrument reads in and the key of your passage. The instrument setting transposes the audio preview to concert pitch — so if you play B♭ clarinet, what you hear matches what you sound.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 3 — Name and enter your passage</div><div class="sp-p">Type a document name, then tap notes on the keyboard. Tap a chip's spelling button to cycle enharmonics. Use <strong>&#x25BA; Play Passage</strong> to hear your entry back.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 4 — Generate</div><div class="sp-p">Tap <strong>Generate Exercises</strong> to produce the full set of rhythm patterns. Use <strong>Export / Print PDF</strong> to export.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Tips</div><div class="sp-p">— Your passage plays once through each pattern, stopping when all notes are used.<br>— Any passage length works — a few notes or an entire phrase.<br>— Tap <strong>&#x21BB; Start Over</strong> to reset and begin a new passage.</div></div>
+    <div class="sp-sec"><div class="sp-h3">About</div><div class="sp-p">Created by Ralph Skiano, Principal Clarinet of the Detroit Symphony Orchestra.<br><br><a href="mailto:rdskiano@gmail.com" style="color:var(--accent)">rdskiano@gmail.com</a></div></div>
+  </div>
+</div>
 
 <!-- Settings -->
 <div class="settings-overlay" id="settings-overlay" onclick="outsideClose(event)">
