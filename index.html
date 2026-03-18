@@ -178,14 +178,20 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 .print-close-btn { background:none; border:1px solid #888; color:#ccc; padding:8px 14px; font-family:'Bebas Neue',sans-serif; font-size:0.85rem; letter-spacing:0.1em; cursor:pointer; }
 .print-content { padding:70px 32px 60px; max-width:760px; margin:0 auto; }
 .print-content h1 { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:0.1em; color:#1a1612; border-bottom:2px solid #1a1612; padding-bottom:8px; margin-bottom:12px; }
-.print-row { margin-bottom:2px; overflow:visible; page-break-inside:avoid; break-inside:avoid; }
+.print-row { margin-bottom:24px; overflow:visible; page-break-inside:avoid; break-inside:avoid; }
 .print-row svg { display:block; width:100%; height:auto; overflow:visible; }
 .print-row svg path, .print-row svg rect, .print-row svg ellipse, .print-row svg circle, .print-row svg polygon, .print-row svg line, .print-row svg text { fill:black!important; stroke:black!important; }
 @media print {
-  .print-toolbar { display:none!important; }
-  .print-overlay { display:block!important; position:static!important; overflow:visible!important; }
-  .print-content { padding:0!important; }
-  body > *:not(.print-overlay) { display:none!important; }
+  body.printing > *:not(.print-overlay) { display:none!important; }
+  body.printing .print-overlay { display:block!important; position:static!important; overflow:visible!important; }
+  body.printing .print-toolbar { display:none!important; }
+  body.printing .print-content { padding:0!important; }
+  body.printing .print-row { page-break-inside:avoid; break-inside:avoid; margin-bottom:20px; }
+  body.printing .print-row svg { width:680px!important; height:auto!important; overflow:visible!important; display:block; }
+  body.printing .print-row svg path, body.printing .print-row svg rect,
+  body.printing .print-row svg ellipse, body.printing .print-row svg circle,
+  body.printing .print-row svg polygon, body.printing .print-row svg line,
+  body.printing .print-row svg text { fill:black!important; stroke:black!important; }
 }
 
 /* Settings panel */
@@ -1103,6 +1109,13 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     document.getElementById('print-content').innerHTML = '';
   }
   window.doExport=doExport;
+  function doPrint() {
+    document.body.classList.add('printing');
+    window.print();
+    setTimeout(function() { document.body.classList.remove('printing'); }, 1000);
+  }
+  window.doPrint = doPrint;
+
   window.closePrintOverlay=closePrintOverlay;
   window.closePrintOverlay=closePrintOverlay;
 
@@ -1244,5 +1257,17 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   buildPiano();
 })();
 </script>
+
+<!-- Print overlay -->
+<div class="print-overlay" id="print-overlay">
+  <div class="print-toolbar">
+    <div class="print-toolbar-title" id="print-overlay-title"></div>
+    <div class="print-toolbar-btns">
+      <button class="print-action-btn" onclick="doPrint()">Print / Save PDF</button>
+      <button class="print-close-btn" onclick="closePrintOverlay()">&#x2715; Close</button>
+    </div>
+  </div>
+  <div class="print-content" id="print-content"></div>
+</div>
 </body>
 </html>
