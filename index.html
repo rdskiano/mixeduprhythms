@@ -55,9 +55,9 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 /* Keyboard block — full width */
 .kb-block { flex-basis: 100%; width: 100%; }
 .kb-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-.kb-prompt { font-family: 'Inconsolata', monospace; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; color: #666; }
-.kb-prompt strong { color: var(--cream); }
-.clear-btn { background: none; border: none; color: #555; font-family: 'Inconsolata', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; text-decoration: underline; }
+.kb-prompt { font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 0.1em; color: #ddd; }
+.kb-prompt strong { color: white; }
+.clear-btn { background: none; border: none; color: #888; font-family: 'Inconsolata', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; text-decoration: underline; }
 .clear-btn:hover { color: var(--accent); }
 .piano-wrap { width: 100%; height: 130px; user-select: none; -webkit-user-select: none; }
 #piano-svg { width: 100%; height: 100%; display: block; cursor: pointer; touch-action: none; }
@@ -70,9 +70,9 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 .chip .enh:hover { background: rgba(255,255,255,0.32); }
 .chip .rm { background: none; border: none; color: rgba(255,255,255,0.45); cursor: pointer; font-size: 0.9rem; line-height: 1; padding: 0 0 0 2px; }
 .chip .rm:hover { color: white; }
-.no-notes { font-family: 'Inconsolata', monospace; font-size: 0.6rem; color: #444; }
-.count-hint { font-family: 'Inconsolata', monospace; font-size: 0.58rem; color: #555; margin-top: 3px; }
-.count-hint strong { color: #888; }
+.no-notes { font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 0.1em; color: #888; }
+.count-hint { font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 0.1em; color: #aaa; margin-top: 5px; }
+.count-hint strong { color: white; }
 
 /* Generate button inline with controls */
 .play-btn {
@@ -101,8 +101,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 /* Output area */
 .output-area { background: var(--cream-dark); padding: 28px 32px 60px; min-height: 50vh; }
 .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 0; color: var(--light); text-align: center; gap: 10px; opacity: 0.35; }
-.empty-clef { font-size: 4rem; line-height: 1; }
-.empty-p { font-family: 'Inconsolata', monospace; font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; }
+.empty-clef { font-size: 5rem; line-height: 1; color: var(--accent); }
+.empty-p { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.12em; color: #aaa; text-transform: uppercase; }
 
 /* Exercises sheet */
 .sheet { background: var(--paper); max-width: 860px; margin: 0 auto; padding: 36px 44px 48px; box-shadow: 0 4px 40px rgba(0,0,0,0.15); }
@@ -307,7 +307,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     <div class="chips-row" id="chips"><span class="no-notes">No notes entered</span></div>
     <div class="count-hint" id="count-hint"></div>
     <button class="play-btn" id="play-btn" onclick="playPassage()">&#9654; Play Passage</button>
-    <div style="margin-top:10px"><div style="font-family:'Bebas Neue',sans-serif;font-size:0.68rem;letter-spacing:0.2em;color:var(--accent);margin-bottom:4px">Document Name</div><input id="doc-name" type="text" placeholder="e.g. Brahms mvt 1" style="width:100%;background:#1a1410;border:1px solid #333;color:var(--cream);padding:7px 10px;font-family:'Inconsolata',monospace;font-size:0.82rem;outline:none;box-sizing:border-box"></div>    <button class="gen-btn" id="gen-btn" disabled style="margin-top:8px">Generate Exercises</button>
+    <div style="margin-top:10px"><div style="font-family:'Bebas Neue',sans-serif;font-size:0.68rem;letter-spacing:0.2em;color:var(--accent);margin-bottom:4px;font-family:'Bebas Neue',sans-serif;font-size:0.68rem;letter-spacing:0.2em;color:var(--accent)">Document Name</div><input id="doc-name" type="text" placeholder="e.g. Brahms mvt 1" style="width:100%;background:#1a1410;border:1px solid #333;color:var(--cream);padding:7px 10px;font-family:'Inconsolata',monospace;font-size:0.82rem;outline:none;box-sizing:border-box"></div>    <button class="gen-btn" id="gen-btn" disabled style="margin-top:8px">Generate Exercises</button>
   </div>
 </div>
 
@@ -321,7 +321,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 <div class="output-area" id="output-area">
   <div class="empty-state" id="empty-state">
     <div class="empty-clef">𝄞</div>
-    <div class="empty-p">Select a group Â· enter your passage Â· generate</div>
+    <div class="empty-p">Select a group · enter your passage · generate</div>
   </div>
   <div id="sheet-wrap" style="display:none">
     <div class="sheet" id="sheet">
@@ -676,7 +676,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   }
   function upPrompt() {
     var el = document.getElementById('kb-prompt');
-    if (!activeGroup) el.innerHTML = 'Tap notes in order — your passage cycles through each rhythm pattern';
+    if (!activeGroup) el.innerHTML = '';
     else if (!selNotes.length) el.innerHTML = 'Enter your passage';
     else el.innerHTML = '<strong>' + selNotes.length + '</strong> note' + (selNotes.length !== 1 ? 's' : '') + ' entered';
   }
