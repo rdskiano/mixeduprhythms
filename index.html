@@ -319,7 +319,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
 <!-- Export bar (shown after generate) -->
 <div class="export-bar" id="export-bar">
-  <button class="export-pdf-btn" onclick="doExport()">&#x1F5A8; Export / Print PDF</button>
+  <button class="export-pdf-btn" onclick="doExport()">&#x2B73; Download Exercises</button>
   <button class="start-over-btn" id="start-over-btn">&#8635; Start Over</button>
 </div>
 
@@ -1082,10 +1082,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     var sec = g2s(activeGroup);
     var docName = document.getElementById('doc-name').value.trim();
     var title = docName ? docName + ' — ' + sec : sec;
-    document.getElementById('print-overlay-title').textContent = title;
-    var cont = document.getElementById('print-content');
-    cont.innerHTML = '<h1>' + title + '</h1>';
     var rows = document.querySelectorAll('.ex-row');
+    var svgParts = [];
     for (var i=0; i<rows.length; i++) {
       var svg = rows[i].querySelector('svg');
       if (svg) {
@@ -1095,20 +1093,41 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
           var vbH = parseFloat(vb.split(' ')[3]);
           if (vbH) s = s.replace(/ height="[^"]*"/i, ' height="' + vbH + 'px"');
         }
-        var div = document.createElement('div');
-        div.className = 'print-row';
-        div.innerHTML = s;
-        cont.appendChild(div);
+        svgParts.push('<div class="row">' + s + '</div>');
       }
     }
-    document.getElementById('print-overlay').classList.add('open');
-    window.scrollTo(0, 0);
-  }
-  function closePrintOverlay() {
-    document.getElementById('print-overlay').classList.remove('open');
-    document.getElementById('print-content').innerHTML = '';
+    // Build self-contained HTML file
+    var html = '<!DOCTYPE html><html><head>'
+      + '<meta charset="UTF-8">'
+      + '<meta name="viewport" content="width=device-width,initial-scale=1">'
+      + '<title>' + title + '</title>'
+      + '<style>'
+      + '@page{margin:0.5in}'
+      + 'body{font-family:sans-serif;background:white;color:black;margin:0;padding:20px}'
+      + 'h1{font-size:14pt;border-bottom:1.5pt solid black;padding-bottom:6px;margin-bottom:12px}'
+      + '.row{page-break-inside:avoid;break-inside:avoid;margin-bottom:24px;overflow:visible}'
+      + 'svg{display:block;width:100%;max-width:680px;height:auto;overflow:visible}'
+      + 'svg path,svg rect,svg ellipse,svg circle,svg polygon,svg line,svg text{fill:black!important;stroke:black!important}'
+      + '</style></head><body>'
+      + '<h1>' + title + '</h1>';
+    html += svgParts.join('');
+    html += '</body></html>';
+    // Trigger download
+    var blob = new Blob([html], {type: 'text/html'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = (docName || 'Mixed Up Rhythms') + '.html';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1000);
   }
   window.doExport=doExport;
+  function closePrintOverlay(){}
+  window.closePrintOverlay=closePrintOverlay;
   function doPrint() {
     document.body.classList.add('printing');
     window.print();
@@ -1258,16 +1277,5 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 })();
 </script>
 
-<!-- Print overlay -->
-<div class="print-overlay" id="print-overlay">
-  <div class="print-toolbar">
-    <div class="print-toolbar-title" id="print-overlay-title"></div>
-    <div class="print-toolbar-btns">
-      <button class="print-action-btn" onclick="doPrint()">Print / Save PDF</button>
-      <button class="print-close-btn" onclick="closePrintOverlay()">&#x2715; Close</button>
-    </div>
-  </div>
-  <div class="print-content" id="print-content"></div>
-</div>
 </body>
 </html>
