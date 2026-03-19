@@ -322,7 +322,7 @@ body { background: white !important; }
 <!-- Export bar (shown after generate) -->
 
 <div class="export-bar" id="export-bar">
-  <button class="export-pdf-btn" onclick="doExport()">&#x2B73; Download Exercises</button>
+  <button class="export-pdf-btn" onclick="doExport()">&#x1F5A8; Export / Print PDF</button>
   <button class="start-over-btn" id="start-over-btn">&#8635; Start Over</button>
 </div>
 
@@ -501,165 +501,166 @@ var DB = [
 {id:32,section:“Four-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16”,“16”,“16”,“8.”]},
 {id:33,section:“Four-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8.”,“16”,“8”,“8”]},
 {id:34,section:“Four-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“8”,“8.”,“16”]},
-{id:35,section:“Four-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“4”,notes:[“8”,“8.”,“16”,“8”]},
+{id:35,section:“Four-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“8.”,“16”,“8”]},
 {id:36,section:“Four-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8.”,“8”,“8”]},
 {id:37,section:“Four-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8.”,“16”,“16”,“8.”]},
 {id:38,section:“Four-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8.”,“8.”,“16”]},
-{id:39,section:“Four-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“q”,“8”,“8”,“8”]},
-{id:40,section:“Four-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“q”,“8”,“8”]},
-{id:41,section:“Four-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“q”,“8.”,“16”,“8”]},
-{id:42,section:“Four-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“q”,“8”]},
-{id:43,section:“Four-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“q”,“8”,“q”,“q”]},
-{id:44,section:“Four-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“q”,“q”,“8”,“q”]},
-{id:45,section:“Four-Note Rhythm Patterns”,timeSig:“7/8”,beaming:“3+3+2”,notes:[“q.”,“8.”,“16”,“q”]},
-{id:46,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16”,“16”,“16”,“16”]},
-{id:47,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16”,“16”,“16”,“16”,“8”]},
-{id:48,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16”,“16”,“8”,“16”,“16”]},
-{id:49,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16.”,“32”,“16.”,“32”]},
-{id:50,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16.”,“32”,“16.”,“32”,“8”]},
-{id:51,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“8”,“16t”,“16t”,“16t”]},
-{id:52,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16t”,“16t”,“16t”,“8”,“8”]},
-{id:53,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16t”,“16t”,“16t”,“8”]},
-{id:54,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“q”,“16”,“16”,“16”,“16”]},
-{id:55,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“q”]},
-{id:56,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“8”,“8t”,“8t”,“8t”]},
-{id:57,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8t”,“8t”,“8t”,“8”,“8”]},
-{id:58,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8.”,“16”,“8t”,“8t”,“8t”]},
-{id:59,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8t”,“8t”,“8t”,“8.”,“16”]},
-{id:60,section:“Five-Note Rhythm Patterns”,timeSig:“5/16”,beaming:””,notes:[“16.”,“32”,“16”,“16”,“16”]},
-{id:61,section:“Five-Note Rhythm Patterns”,timeSig:“5/16”,beaming:””,notes:[“16”,“16”,“16”,“16.”,“32”]},
-{id:62,section:“Five-Note Rhythm Patterns”,timeSig:“5/16”,beaming:””,notes:[“8”,“16”,“16”,“32”,“32”]},
-{id:63,section:“Five-Note Rhythm Patterns”,timeSig:“5/16”,beaming:””,notes:[“32”,“32”,“16”,“16”,“8”]},
-{id:64,section:“Five-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“8”]},
-{id:65,section:“Five-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“8”,“8.”,“16”]},
-{id:66,section:“Five-Note Rhythm Patterns”,timeSig:“7/16”,beaming:””,notes:[“8”,“8”,“16”,“16”,“16”]},
-{id:67,section:“Five-Note Rhythm Patterns”,timeSig:“7/16”,beaming:””,notes:[“8”,“16”,“16”,“8”,“16”]},
-{id:68,section:“Five-Note Rhythm Patterns”,timeSig:“7/16”,beaming:””,notes:[“8”,“16”,“16”,“16”,“8”]},
-{id:69,section:“Five-Note Rhythm Patterns”,timeSig:“7/16”,beaming:””,notes:[“16”,“16”,“8”,“8”,“16”]},
-{id:70,section:“Five-Note Rhythm Patterns”,timeSig:“7/16”,beaming:“3+4”,notes:[“16”,“16”,“16”,“8.”,“16”]},
-{id:71,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“8”,“16”,“16”,“16”,“16”]},
-{id:72,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16”,“16”,“16”,“16”,“8”]},
-{id:73,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“8”,“8”]},
-{id:74,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“8”,“8”,“16”,“16”]},
-{id:75,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8”,“16”,“8”,“16”,“16”]},
-{id:76,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8”,“16”,“16”,“16”,“8”]},
-{id:77,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8”,“8”,“16”,“16”,“16”]},
-{id:78,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16”,“16”,“16”,“8”,“16”]},
-{id:79,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“8”,“8”,“8”,“16t”,“16t”,“16t”]},
-{id:80,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“8”,“8”,“16t”,“16t”,“16t”,“8”]},
-{id:81,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“8”,“16t”,“16t”,“16t”,“8”,“8”]},
-{id:82,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“16t”,“16t”,“16t”,“8”,“8”,“8”]},
-{id:83,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8.”,“16”,“16”,“16”,“16”,“16”]},
-{id:84,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2”,notes:[“16”,“16”,“8.”,“16”,“16”,“16”]},
-{id:85,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“16”,“8.”]},
-{id:86,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8.”,“16”,“16”,“16”,“16”]},
-{id:87,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“8.”,“32t”,“32t”,“32t”,“8.”,“16”]},
-{id:88,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“8.”,“16”,“8.”,“32t”,“32t”,“32t”]},
-{id:89,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“32t”,“32t”,“32t”,“8.”,“16”,“8.”]},
-{id:90,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“8”,“32”,“32”,“32”,“32”]},
-{id:91,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“32”,“32”,“32”,“32”,“8”,“8”]},
-{id:92,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:“3”,notes:[“32”,“32”,“8”,“8”,“32”,“32”]},
-{id:93,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16”,“16”,“16t”,“16t”,“16t”]},
-{id:94,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16t”,“16t”,“16t”,“16”,“16”,“8”]},
-{id:95,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16t”,“16t”,“16t”,“8.”,“32”,“32”]},
-{id:96,section:“Six-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“8”,“8”,“8.”,“16”,“8”]},
-{id:97,section:“Six-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8.”,“16”,“8”,“8”,“8”,“8”]},
-{id:98,section:“Six-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“8.”,“16”,“8.”,“16”,“8”]},
-{id:99,section:“Six-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8.”,“16”,“8”,“8”,“8.”,“16”]},
-{id:100,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“16”,“8”,“8”,“8”,“8”]},
-{id:101,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“16”,“16”,“8”,“8”,“8”]},
-{id:102,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“16”,“16”,“8”,“8”]},
-{id:103,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“8”,“16”,“16”,“8”]},
-{id:104,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“8”,“8”,“16”,“16”]},
-{id:105,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“16”,“8”,“8.”,“16”,“8”]},
-{id:106,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“8”,“8”,“16”,“16”]},
-{id:107,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:“3+2”,notes:[“16”,“16”,“8.”,“16”,“8.”,“16”]},
-{id:108,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“16”,“16”]},
-{id:109,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“q”,“8”,“8”,“8”,“8”,“8”]},
-{id:110,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:“3+2+2”,notes:[“8”,“8”,“8”,“q”,“8”,“8”]},
-{id:111,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8”,“q”,“8”,“8”,“8”,“8”]},
-{id:112,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:“3+2+2”,notes:[“q”,“8”,“8.”,“16”,“8.”,“16”]},
-{id:113,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:“3+2+2”,notes:[“8.”,“16”,“8”,“q”,“16”,“8.”]},
-{id:114,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“q”,“8.”,“16”,“8.”,“16”,“8”]},
-{id:115,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16”,“16”,“16”,“16”,“16”,“16”]},
-{id:116,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“16”,“16”,“8”]},
-{id:117,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“8”,“16”,“16”,“16”,“16”]},
-{id:118,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8”,“16”,“16”,“16”,“16”,“16”]},
-{id:119,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16.”,“32”,“16.”,“32”,“16.”,“32”]},
-{id:120,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“32”,“16.”,“32”,“16.”,“32”,“16.”,“8”]},
-{id:121,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“q”,“16t”,“16t”,“16t”,“16t”,“16t”,“16t”]},
-{id:122,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16t”,“16t”,“16t”,“16t”,“16t”,“16t”,“q”]},
-{id:123,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16t”,“16t”,“16t”,“q”,“16t”,“16t”,“16t”]},
-{id:124,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“8t”,“8t”,“8t”]},
-{id:125,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8t”,“8t”,“8t”,“16”,“16”,“16”,“16”]},
-{id:126,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16t”,“16t”,“16t”,“16t”,“16t”,“16t”]},
-{id:127,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16t”,“16t”,“16t”,“8”,“16t”,“16t”,“16t”]},
-{id:128,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16t”,“16t”,“16t”,“16t”,“16t”,“16t”,“8”]},
-{id:129,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16”,“16”,“32”,“32”,“32”,“32”]},
-{id:130,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“32”,“32”,“32”,“32”,“16”,“16”,“8”]},
-{id:131,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“32”,“32”,“32”,“32”,“8”,“16”,“16”]},
-{id:132,section:“Seven-Note Rhythm Patterns”,timeSig:“3/4”,beaming:””,notes:[“8.”,“16”,“16”,“8”,“16”,“16”,“8.”]},
-{id:133,section:“Seven-Note Rhythm Patterns”,timeSig:“3/4”,beaming:“4+2”,notes:[“16”,“8”,“8”,“8”,“16”,“8.”,“16”]},
-{id:134,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“8”,“16”,“16”,“16”,“16”]},
-{id:135,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“16”,“16”,“16”,“8”,“8”,“8”]},
-{id:136,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“16”,“16”,“8”,“16”,“16”]},
-{id:137,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“16”,“16”,“8”,“16”,“16”,“8”]},
-{id:138,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“16”,“8”,“8”,“8”,“16”,“16”]},
-{id:139,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:“5”,notes:[“16”,“8”,“16”,“16”,“8”,“16”,“8”]},
-{id:140,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:“5”,notes:[“16”,“8”,“16”,“8”,“16”,“8”,“16”]},
-{id:141,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:“5”,notes:[“8.”,“16”,“16”,“8”,“16”,“16”,“16”]},
-{id:142,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“8”,“16.”,“32”,“16.”,“32”]},
-{id:143,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16.”,“32”,“16.”,“32”,“8.”,“16”,“8”]},
-{id:144,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:“5”,notes:[“16”,“8”,“8”,“8”,“8”,“32”,“32”]},
-{id:145,section:“Seven-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“8.”,“16”,“8”]},
-{id:146,section:“Seven-Note Rhythm Patterns”,timeSig:“7/8”,beaming:“3+4”,notes:[“8.”,“16”,“8”,“8.”,“16”,“8.”,“16”]},
-{id:147,section:“Seven-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“8”,“8.”,“16”]},
-{id:148,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16.”,“32”,“16”,“16”,“16”,“16”,“16”,“16”]},
-{id:149,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“32”,“16.”,“16”,“16”,“16”,“16”,“16”,“16”]},
-{id:150,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“16.”,“32”,“16”,“16”]},
-{id:151,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“16”,“16”,“32”,“16.”]},
-{id:152,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16.”,“32”,“16”,“16”,“16”,“16”,“32”,“16.”]},
-{id:153,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“32”,“16.”,“16.”,“32”,“16”,“16”]},
-{id:154,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“16.”,“32”,“16.”,“32”]},
-{id:155,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“32”,“16.”,“32”,“16.”,“16”,“16”,“16”,“16”]},
-{id:156,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16.”,“32”,“16.”,“32”,“16”,“16”]},
-{id:157,section:“Eight-Note Rhythm Patterns”,timeSig:“4/4”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“16”,“8.”,“16”,“8.”]},
-{id:158,section:“Eight-Note Rhythm Patterns”,timeSig:“4/4”,beaming:””,notes:[“16”,“8.”,“16”,“8.”,“8.”,“16”,“8.”,“16”]},
-{id:159,section:“Eight-Note Rhythm Patterns”,timeSig:“4/4”,beaming:””,notes:[“8.”,“16”,“16”,“8.”,“16”,“8.”,“8.”,“16”]},
-{id:160,section:“Eight-Note Rhythm Patterns”,timeSig:“4/4”,beaming:””,notes:[“16”,“8.”,“8.”,“16”,“16”,“8.”,“8.”,“16”]},
-{id:161,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“8”,“16”,“16”,“16”,“16”,“8”,“8”]},
-{id:162,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“16”,“16”,“8”,“8”,“8”,“16”,“16”]},
-{id:163,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“16”,“16”,“8”,“8”,“8”,“16”,“16”,“8”]},
-{id:164,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“16”,“16”,“16”,“16”,“8.”,“16”,“8”]},
-{id:165,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8.”,“16”,“16”,“16”,“16”,“16”,“16”,“8.”]},
-{id:166,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“8.”,“16”,“16”,“16”,“16”,“16”,“8”]},
-{id:167,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“16”,“8”,“8”,“16”,“16”,“16”,“8”,“8”]},
-{id:168,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“16”,“8”,“8”,“16”,“8”,“16.”,“32”,“8”]},
-{id:169,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“8”,“16”,“16”,“16”,“8”,“8”,“16”]},
-{id:170,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16t”,“16t”,“16t”,“16t”,“16t”,“16t”,“8”]},
-{id:171,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16t”,“16t”,“16t”,“8”,“8”,“16t”,“16t”,“16t”]},
-{id:172,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16t”,“16t”,“16t”,“16”,“16”,“16”,“16”]},
-{id:173,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16.”,“32”,“16.”,“32”,“16t”,“16t”,“16t”,“8”]},
-{id:174,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8t”,“8t”,“8t”,“8”,“32”,“32”,“32”,“32”]},
-{id:175,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“32”,“32”,“32”,“32”,“8”,“8t”,“8t”,“8t”]},
-{id:176,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“16”,“16”,“16”,“16”,“16”,“16”]},
-{id:177,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“16”,“16”,“16”,“8”,“16”,“16”,“8”]},
-{id:178,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16.”,“32”,“16.”,“32”,“16.”,“32”,“8.”,“16”]},
-{id:179,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“16.”,“32”,“16.”,“32”,“16.”,“32”]},
-{id:180,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16.”,“32”,“16.”,“32”,“8”,“16.”,“32”,“8”]},
-{id:181,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“8”,“8”,“32”,“32”,“32”,“32”]},
-{id:182,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“32”,“32”,“32”,“32”,“8.”,“16”]},
-{id:183,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“32”,“32”,“32”,“32”,“8”,“8.”,“16”,“8”]},
-{id:184,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8”,“8”,“8”,“8”,“8”,“8”,“16”,“16”]},
-{id:185,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8”,“8”,“8”,“16”,“16”,“8”,“8”,“8”]},
-{id:186,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“8.”,“16”,“16”,“16”]},
-{id:187,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“16”,“8”,“8”,“16”,“8.”,“16”,“16”,“8.”]},
-{id:188,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“16”,“16”,“8”,“8”,“8”,“8.”,“16”,“8”]},
-{id:189,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8.”,“16”,“8”,“8.”,“16”,“8”,“16”,“16”]},
-{id:190,section:“Eight-Note Rhythm Patterns”,timeSig:“8/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“8”,“8.”,“16”,“8”]},
-{id:191,section:“Eight-Note Rhythm Patterns”,timeSig:“8/8”,beaming:””,notes:[“16”,“8”,“16”,“q”,“8”,“8.”,“16”,“8”]},
-{id:192,section:“Eight-Note Rhythm Patterns”,timeSig:“8/8”,beaming:””,notes:[“8.”,“16”,“8”,“8.”,“16”,“8.”,“16”,“8”]},
-{id:193,section:“Eight-Note Rhythm Patterns”,timeSig:“8/8”,beaming:””,notes:[“16”,“8”,“8”,“16”,“q”,“8”,“8”,“8”]}
+{id:39,section:“Four-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8.”,“8”,“8”,“16”]},
+{id:40,section:“Four-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“q”,“8”,“8”,“8”]},
+{id:41,section:“Four-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“q”,“8”,“8”]},
+{id:42,section:“Four-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“q”,“8.”,“16”,“8”]},
+{id:43,section:“Four-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“q”,“8”]},
+{id:44,section:“Four-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“q”,“8”,“q”,“q”]},
+{id:45,section:“Four-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“q”,“q”,“8”,“q”]},
+{id:46,section:“Four-Note Rhythm Patterns”,timeSig:“7/8”,beaming:“3+3+2”,notes:[“q.”,“8.”,“16”,“q”]},
+{id:47,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16”,“16”,“16”,“16”]},
+{id:48,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16”,“16”,“16”,“16”,“8”]},
+{id:49,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16”,“16”,“8”,“16”,“16”]},
+{id:50,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16.”,“32”,“16.”,“32”]},
+{id:51,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16.”,“32”,“16.”,“32”,“8”]},
+{id:52,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“8”,“16t”,“16t”,“16t”]},
+{id:53,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16t”,“16t”,“16t”,“8”,“8”]},
+{id:54,section:“Five-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16t”,“16t”,“16t”,“8”]},
+{id:55,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“q”,“16”,“16”,“16”,“16”]},
+{id:56,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“q”]},
+{id:57,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“8”,“8t”,“8t”,“8t”]},
+{id:58,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8t”,“8t”,“8t”,“8”,“8”]},
+{id:59,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8.”,“16”,“8t”,“8t”,“8t”]},
+{id:60,section:“Five-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8t”,“8t”,“8t”,“8.”,“16”]},
+{id:61,section:“Five-Note Rhythm Patterns”,timeSig:“5/16”,beaming:””,notes:[“16.”,“32”,“16”,“16”,“16”]},
+{id:62,section:“Five-Note Rhythm Patterns”,timeSig:“5/16”,beaming:””,notes:[“16”,“16”,“16”,“16.”,“32”]},
+{id:63,section:“Five-Note Rhythm Patterns”,timeSig:“5/16”,beaming:””,notes:[“8”,“16”,“16”,“32”,“32”]},
+{id:64,section:“Five-Note Rhythm Patterns”,timeSig:“5/16”,beaming:””,notes:[“32”,“32”,“16”,“16”,“8”]},
+{id:65,section:“Five-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“8”]},
+{id:66,section:“Five-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“8”,“8.”,“16”]},
+{id:67,section:“Five-Note Rhythm Patterns”,timeSig:“7/16”,beaming:””,notes:[“8”,“8”,“16”,“16”,“16”]},
+{id:68,section:“Five-Note Rhythm Patterns”,timeSig:“7/16”,beaming:””,notes:[“8”,“16”,“16”,“8”,“16”]},
+{id:69,section:“Five-Note Rhythm Patterns”,timeSig:“7/16”,beaming:””,notes:[“8”,“16”,“16”,“16”,“8”]},
+{id:70,section:“Five-Note Rhythm Patterns”,timeSig:“7/16”,beaming:””,notes:[“16”,“16”,“8”,“8”,“16”]},
+{id:71,section:“Five-Note Rhythm Patterns”,timeSig:“7/16”,beaming:“3+4”,notes:[“16”,“16”,“16”,“8.”,“16”]},
+{id:72,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“8”,“16”,“16”,“16”,“16”]},
+{id:73,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16”,“16”,“16”,“16”,“8”]},
+{id:74,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“8”,“8”]},
+{id:75,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“8”,“8”,“16”,“16”]},
+{id:76,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8”,“16”,“8”,“16”,“16”]},
+{id:77,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8”,“16”,“16”,“16”,“8”]},
+{id:78,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8”,“8”,“16”,“16”,“16”]},
+{id:79,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16”,“16”,“16”,“8”,“16”]},
+{id:80,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“8”,“8”,“8”,“16t”,“16t”,“16t”]},
+{id:81,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“8”,“8”,“16t”,“16t”,“16t”,“8”]},
+{id:82,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“8”,“16t”,“16t”,“16t”,“8”,“8”]},
+{id:83,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“16t”,“16t”,“16t”,“8”,“8”,“8”]},
+{id:84,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8.”,“16”,“16”,“16”,“16”,“16”]},
+{id:85,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2”,notes:[“16”,“16”,“8.”,“16”,“16”,“16”]},
+{id:86,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“16”,“8.”]},
+{id:87,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8.”,“16”,“16”,“16”,“16”]},
+{id:88,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“8.”,“32t”,“32t”,“32t”,“8.”,“16”]},
+{id:89,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“8.”,“16”,“8.”,“32t”,“32t”,“32t”]},
+{id:90,section:“Six-Note Rhythm Patterns”,timeSig:“2/4”,beaming:“2+2”,notes:[“32t”,“32t”,“32t”,“8.”,“16”,“8.”]},
+{id:91,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“8”,“32”,“32”,“32”,“32”]},
+{id:92,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“32”,“32”,“32”,“32”,“8”,“8”]},
+{id:93,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:“3”,notes:[“32”,“32”,“8”,“8”,“32”,“32”]},
+{id:94,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16”,“16”,“16t”,“16t”,“16t”]},
+{id:95,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16t”,“16t”,“16t”,“16”,“16”,“8”]},
+{id:96,section:“Six-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16t”,“16t”,“16t”,“8.”,“32”,“32”]},
+{id:97,section:“Six-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“8”,“8”,“8.”,“16”,“8”]},
+{id:98,section:“Six-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8.”,“16”,“8”,“8”,“8”,“8”]},
+{id:99,section:“Six-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“8.”,“16”,“8.”,“16”,“8”]},
+{id:100,section:“Six-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8.”,“16”,“8”,“8”,“8.”,“16”]},
+{id:101,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“16”,“8”,“8”,“8”,“8”]},
+{id:102,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“16”,“16”,“8”,“8”,“8”]},
+{id:103,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“16”,“16”,“8”,“8”]},
+{id:104,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“8”,“16”,“16”,“8”]},
+{id:105,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“8”,“8”,“16”,“16”]},
+{id:106,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“16”,“8”,“8.”,“16”,“8”]},
+{id:107,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“8”,“8”,“16”,“16”]},
+{id:108,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:“3+2”,notes:[“16”,“16”,“8.”,“16”,“8.”,“16”]},
+{id:109,section:“Six-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“16”,“16”]},
+{id:110,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“q”,“8”,“8”,“8”,“8”,“8”]},
+{id:111,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:“3+2+2”,notes:[“8”,“8”,“8”,“q”,“8”,“8”]},
+{id:112,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8”,“q”,“8”,“8”,“8”,“8”]},
+{id:113,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:“3+2+2”,notes:[“q”,“8”,“8.”,“16”,“8.”,“16”]},
+{id:114,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:“3+2+2”,notes:[“8.”,“16”,“8”,“q”,“16”,“8.”]},
+{id:115,section:“Six-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“q”,“8.”,“16”,“8.”,“16”,“8”]},
+{id:116,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16”,“16”,“16”,“16”,“16”,“16”]},
+{id:117,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“16”,“16”,“8”]},
+{id:118,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“8”,“16”,“16”,“16”,“16”]},
+{id:119,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“8”,“16”,“16”,“16”,“16”,“16”]},
+{id:120,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16.”,“32”,“16.”,“32”,“16.”,“32”]},
+{id:121,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“32”,“16.”,“32”,“16.”,“32”,“16.”,“8”]},
+{id:122,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“q”,“16t”,“16t”,“16t”,“16t”,“16t”,“16t”]},
+{id:123,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16t”,“16t”,“16t”,“16t”,“16t”,“16t”,“q”]},
+{id:124,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16t”,“16t”,“16t”,“q”,“16t”,“16t”,“16t”]},
+{id:125,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“8t”,“8t”,“8t”]},
+{id:126,section:“Seven-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8t”,“8t”,“8t”,“16”,“16”,“16”,“16”]},
+{id:127,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16t”,“16t”,“16t”,“16t”,“16t”,“16t”]},
+{id:128,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16t”,“16t”,“16t”,“8”,“16t”,“16t”,“16t”]},
+{id:129,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“16t”,“16t”,“16t”,“16t”,“16t”,“16t”,“8”]},
+{id:130,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“8”,“16”,“16”,“32”,“32”,“32”,“32”]},
+{id:131,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“32”,“32”,“32”,“32”,“16”,“16”,“8”]},
+{id:132,section:“Seven-Note Rhythm Patterns”,timeSig:“3/8”,beaming:””,notes:[“32”,“32”,“32”,“32”,“8”,“16”,“16”]},
+{id:133,section:“Seven-Note Rhythm Patterns”,timeSig:“3/4”,beaming:””,notes:[“8.”,“16”,“16”,“8”,“16”,“16”,“8.”]},
+{id:134,section:“Seven-Note Rhythm Patterns”,timeSig:“3/4”,beaming:“4+2”,notes:[“16”,“8”,“8”,“8”,“16”,“8.”,“16”]},
+{id:135,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“8”,“16”,“16”,“16”,“16”]},
+{id:136,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“16”,“16”,“16”,“8”,“8”,“8”]},
+{id:137,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“16”,“16”,“8”,“16”,“16”]},
+{id:138,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“16”,“16”,“8”,“16”,“16”,“8”]},
+{id:139,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“16”,“8”,“8”,“8”,“16”,“16”]},
+{id:140,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“8”,“16”,“16”,“8”,“16”,“8”]},
+{id:141,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“8”,“16”,“8”,“16”,“8”,“16”]},
+{id:142,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“16”,“8”,“16”,“16”,“16”]},
+{id:143,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“8”,“16.”,“32”,“16.”,“32”]},
+{id:144,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16.”,“32”,“16.”,“32”,“8.”,“16”,“8”]},
+{id:145,section:“Seven-Note Rhythm Patterns”,timeSig:“5/8”,beaming:“5”,notes:[“16”,“8”,“8”,“8”,“8”,“32”,“32”]},
+{id:146,section:“Seven-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“8.”,“16”,“8”]},
+{id:147,section:“Seven-Note Rhythm Patterns”,timeSig:“7/8”,beaming:“3+4”,notes:[“8.”,“16”,“8”,“8.”,“16”,“8.”,“16”]},
+{id:148,section:“Seven-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“8”,“8.”,“16”]},
+{id:149,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16.”,“32”,“16”,“16”,“16”,“16”,“16”,“16”]},
+{id:150,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“32”,“16.”,“16”,“16”,“16”,“16”,“16”,“16”]},
+{id:151,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“16.”,“32”,“16”,“16”]},
+{id:152,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“16”,“16”,“32”,“16.”]},
+{id:153,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16.”,“32”,“16”,“16”,“16”,“16”,“32”,“16.”]},
+{id:154,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“32”,“16.”,“16.”,“32”,“16”,“16”]},
+{id:155,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16”,“16”,“16.”,“32”,“16.”,“32”]},
+{id:156,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“32”,“16.”,“32”,“16.”,“16”,“16”,“16”,“16”]},
+{id:157,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16”,“16”,“16.”,“32”,“16.”,“32”,“16”,“16”]},
+{id:158,section:“Eight-Note Rhythm Patterns”,timeSig:“4/4”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“16”,“8.”,“16”,“8.”]},
+{id:159,section:“Eight-Note Rhythm Patterns”,timeSig:“4/4”,beaming:””,notes:[“16”,“8.”,“16”,“8.”,“8.”,“16”,“8.”,“16”]},
+{id:160,section:“Eight-Note Rhythm Patterns”,timeSig:“4/4”,beaming:””,notes:[“8.”,“16”,“16”,“8.”,“16”,“8.”,“8.”,“16”]},
+{id:161,section:“Eight-Note Rhythm Patterns”,timeSig:“4/4”,beaming:””,notes:[“16”,“8.”,“8.”,“16”,“16”,“8.”,“8.”,“16”]},
+{id:162,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“8”,“16”,“16”,“16”,“16”,“8”,“8”]},
+{id:163,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“16”,“16”,“8”,“8”,“8”,“16”,“16”]},
+{id:164,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“16”,“16”,“8”,“8”,“8”,“16”,“16”,“8”]},
+{id:165,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“16”,“16”,“16”,“16”,“8.”,“16”,“8”]},
+{id:166,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8.”,“16”,“16”,“16”,“16”,“16”,“16”,“8.”]},
+{id:167,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“8.”,“16”,“16”,“16”,“16”,“16”,“8”]},
+{id:168,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“16”,“8”,“8”,“16”,“16”,“16”,“8”,“8”]},
+{id:169,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“16”,“8”,“8”,“16”,“8”,“16.”,“32”,“8”]},
+{id:170,section:“Eight-Note Rhythm Patterns”,timeSig:“6/8”,beaming:””,notes:[“8”,“8”,“16”,“16”,“16”,“8”,“8”,“16”]},
+{id:171,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16t”,“16t”,“16t”,“16t”,“16t”,“16t”,“8”]},
+{id:172,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16t”,“16t”,“16t”,“8”,“8”,“16t”,“16t”,“16t”]},
+{id:173,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8”,“16t”,“16t”,“16t”,“16”,“16”,“16”,“16”]},
+{id:174,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“16.”,“32”,“16.”,“32”,“16t”,“16t”,“16t”,“8”]},
+{id:175,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“8t”,“8t”,“8t”,“8”,“32”,“32”,“32”,“32”]},
+{id:176,section:“Eight-Note Rhythm Patterns”,timeSig:“2/4”,beaming:””,notes:[“32”,“32”,“32”,“32”,“8”,“8t”,“8t”,“8t”]},
+{id:177,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“16”,“16”,“16”,“16”,“16”,“16”]},
+{id:178,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16”,“16”,“16”,“16”,“8”,“16”,“16”,“8”]},
+{id:179,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16.”,“32”,“16.”,“32”,“16.”,“32”,“8.”,“16”]},
+{id:180,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“16.”,“32”,“16.”,“32”,“16.”,“32”]},
+{id:181,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“16.”,“32”,“16.”,“32”,“8”,“16.”,“32”,“8”]},
+{id:182,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8”,“8”,“8”,“8”,“32”,“32”,“32”,“32”]},
+{id:183,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“8.”,“16”,“32”,“32”,“32”,“32”,“8.”,“16”]},
+{id:184,section:“Eight-Note Rhythm Patterns”,timeSig:“5/8”,beaming:””,notes:[“32”,“32”,“32”,“32”,“8”,“8.”,“16”,“8”]},
+{id:185,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8”,“8”,“8”,“8”,“8”,“8”,“16”,“16”]},
+{id:186,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8”,“8”,“8”,“16”,“16”,“8”,“8”,“8”]},
+{id:187,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“8.”,“16”,“16”,“16”]},
+{id:188,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“16”,“8”,“8”,“16”,“8.”,“16”,“16”,“8.”]},
+{id:189,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“16”,“16”,“8”,“8”,“8”,“8.”,“16”,“8”]},
+{id:190,section:“Eight-Note Rhythm Patterns”,timeSig:“7/8”,beaming:””,notes:[“8.”,“16”,“8”,“8.”,“16”,“8”,“16”,“16”]},
+{id:191,section:“Eight-Note Rhythm Patterns”,timeSig:“8/8”,beaming:””,notes:[“8.”,“16”,“8.”,“16”,“8”,“8.”,“16”,“8”]},
+{id:192,section:“Eight-Note Rhythm Patterns”,timeSig:“8/8”,beaming:””,notes:[“16”,“8”,“16”,“q”,“8”,“8.”,“16”,“8”]},
+{id:193,section:“Eight-Note Rhythm Patterns”,timeSig:“8/8”,beaming:””,notes:[“8.”,“16”,“8”,“8.”,“16”,“8.”,“16”,“8”]},
+{id:194,section:“Eight-Note Rhythm Patterns”,timeSig:“8/8”,beaming:””,notes:[“16”,“8”,“8”,“16”,“q”,“8”,“8”,“8”]},
 ];
 
 // ── STATE ─────────────────────────────────────────────
@@ -1102,8 +1103,10 @@ function doExport() {
 var sec = g2s(activeGroup);
 var docName = document.getElementById(‘doc-name’).value.trim();
 var title = docName ? docName + ’ — ’ + sec : sec;
+document.getElementById(‘print-overlay-title’).textContent = title;
+var cont = document.getElementById(‘print-content’);
+cont.innerHTML = ‘<h1>’ + title + ‘</h1>’;
 var rows = document.querySelectorAll(’.ex-row’);
-var svgParts = [];
 for (var i=0; i<rows.length; i++) {
 var svg = rows[i].querySelector(‘svg’);
 if (svg) {
@@ -1113,41 +1116,20 @@ if (vb) {
 var vbH = parseFloat(vb.split(’ ‘)[3]);
 if (vbH) s = s.replace(/ height=”[^”]*”/i, ’ height=”’ + vbH + ‘px”’);
 }
-svgParts.push(’<div class="row">’ + s + ‘</div>’);
+var div = document.createElement(‘div’);
+div.className = ‘print-row’;
+div.innerHTML = s;
+cont.appendChild(div);
 }
 }
-// Build self-contained HTML file
-var html = ‘<!DOCTYPE html><html><head>’
-+ ‘<meta charset="UTF-8">’
-+ ‘<meta name="viewport" content="width=device-width,initial-scale=1">’
-+ ‘<title>’ + title + ‘</title>’
-+ ‘<style>’
-+ ‘@page{margin:0.5in}’
-+ ‘body{font-family:sans-serif;background:white;color:black;margin:0;padding:20px}’
-+ ‘h1{font-size:14pt;border-bottom:1.5pt solid black;padding-bottom:6px;margin-bottom:12px}’
-+ ‘.row{page-break-inside:avoid;break-inside:avoid;margin-bottom:24px;overflow:visible}’
-+ ‘svg{display:block;width:100%;max-width:680px;height:auto;overflow:visible}’
-+ ‘svg path,svg rect,svg ellipse,svg circle,svg polygon,svg line,svg text{fill:black!important;stroke:black!important}’
-+ ‘</style></head><body>’
-+ ‘<h1>’ + title + ‘</h1>’;
-html += svgParts.join(’’);
-html += ‘</body></html>’;
-// Trigger download
-var blob = new Blob([html], {type: ‘text/html’});
-var url = URL.createObjectURL(blob);
-var a = document.createElement(‘a’);
-a.href = url;
-a.download = (docName || ‘Mixed Up Rhythms’) + ‘.html’;
-document.body.appendChild(a);
-a.click();
-setTimeout(function() {
-document.body.removeChild(a);
-URL.revokeObjectURL(url);
-}, 1000);
+document.getElementById(‘print-overlay’).classList.add(‘open’);
+window.scrollTo(0, 0);
+}
+function closePrintOverlay() {
+document.getElementById(‘print-overlay’).classList.remove(‘open’);
+document.getElementById(‘print-content’).innerHTML = ‘’;
 }
 window.doExport=doExport;
-function closePrintOverlay(){}
-window.closePrintOverlay=closePrintOverlay;
 function doPrint() {
 document.body.classList.add(‘printing’);
 window.print();
@@ -1302,5 +1284,17 @@ buildPiano();
 })();
 </script>
 
+<!-- Print overlay -->
+
+<div class="print-overlay" id="print-overlay">
+  <div class="print-toolbar">
+    <div class="print-toolbar-title" id="print-overlay-title"></div>
+    <div class="print-toolbar-btns">
+      <button class="print-action-btn" onclick="doPrint()">Print / Save PDF</button>
+      <button class="print-close-btn" onclick="closePrintOverlay()">&#x2715; Close</button>
+    </div>
+  </div>
+  <div class="print-content" id="print-content"></div>
+</div>
 </body>
 </html>
