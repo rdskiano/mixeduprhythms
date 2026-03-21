@@ -41,8 +41,13 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 .ctl-block { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
 .ctl-label { font-family: 'Bebas Neue', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; color: var(--accent); }
 .group-btns { display: flex; gap: 5px; }
-.group-btn { width: 42px; height: 42px; border: 2px solid #2a231d; background: transparent; color: #666; font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; cursor: pointer; transition: all 0.12s; display: flex; align-items: center; justify-content: center; }
+.group-btn { min-width: 52px; height: 72px; border: 2px solid #2a231d; background: transparent; color: #666; cursor: pointer; transition: all 0.12s; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 6px 4px; gap: 3px; }
 .group-btn:hover { border-color: var(--accent); color: var(--accent); }
+.group-btn:hover svg { opacity: 1; }
+.group-btn .btn-num { font-family: 'Bebas Neue', sans-serif; font-size: 15px; font-weight: bold; color: var(--accent); letter-spacing: 0.05em; }
+.group-btn.active .btn-num { color: white; }
+.group-btn svg { opacity: 0.6; }
+.group-btn.active svg { opacity: 1; }
 .group-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
 
 .sel-wrap { position: relative; }
@@ -244,14 +249,14 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
 <div class="controls">
   <div class="ctl-block">
-    <div class="ctl-label">Group Size</div>
+    <div class="ctl-label">Note Grouping</div>
     <div class="group-btns">
-      <button class="group-btn" data-n="3">3</button>
-      <button class="group-btn" data-n="4">4</button>
-      <button class="group-btn" data-n="5">5</button>
-      <button class="group-btn" data-n="6">6</button>
-      <button class="group-btn" data-n="7">7</button>
-      <button class="group-btn" data-n="8">8</button>
+      <button class="group-btn" data-n="3"><svg viewBox="0 0 52 36" width="52" height="28" xmlns="http://www.w3.org/2000/svg"><line x1="11" y1="7" x2="39" y2="7" stroke="#f5f0e8" stroke-width="2.5"/><line x1="11" y1="7" x2="11" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="6" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,6,30)"/><line x1="25" y1="7" x2="25" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="20" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,20,30)"/><line x1="39" y1="7" x2="39" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="34" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,34,30)"/></svg><span class="btn-num">3</span></button>
+      <button class="group-btn" data-n="4"><svg viewBox="0 0 54 36" width="54" height="28" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="7" x2="49" y2="7" stroke="#f5f0e8" stroke-width="2.5"/><line x1="10" y1="12" x2="49" y2="12" stroke="#f5f0e8" stroke-width="2.5"/><line x1="10" y1="7" x2="10" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="5" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,5,30)"/><line x1="23" y1="7" x2="23" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="18" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,18,30)"/><line x1="36" y1="7" x2="36" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="31" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,31,30)"/><line x1="49" y1="7" x2="49" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="44" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,44,30)"/></svg><span class="btn-num">4</span></button>
+      <button class="group-btn" data-n="5"><svg viewBox="0 0 68 44" width="62" height="36" xmlns="http://www.w3.org/2000/svg"><text x="35" y="6" text-anchor="middle" font-size="8" fill="#f5f0e8" font-family="serif" font-weight="bold">5</text><line x1="4" y1="9" x2="4" y2="13" stroke="#f5f0e8" stroke-width="1.5"/><line x1="4" y1="11" x2="66" y2="11" stroke="#f5f0e8" stroke-width="1.5"/><line x1="66" y1="9" x2="66" y2="13" stroke="#f5f0e8" stroke-width="1.5"/><line x1="10" y1="17" x2="62" y2="17" stroke="#f5f0e8" stroke-width="2.5"/><line x1="10" y1="17" x2="10" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="5" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,5,37)"/><line x1="23" y1="17" x2="23" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="18" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,18,37)"/><line x1="36" y1="17" x2="36" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="31" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,31,37)"/><line x1="49" y1="17" x2="49" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="44" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,44,37)"/><line x1="62" y1="17" x2="62" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="57" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,57,37)"/></svg><span class="btn-num">5</span></button>
+      <button class="group-btn" data-n="6"><svg viewBox="0 0 74 36" width="68" height="28" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="7" x2="34" y2="7" stroke="#f5f0e8" stroke-width="2.5"/><line x1="46" y1="7" x2="70" y2="7" stroke="#f5f0e8" stroke-width="2.5"/><line x1="10" y1="7" x2="10" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="5" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,5,30)"/><line x1="22" y1="7" x2="22" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="17" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,17,30)"/><line x1="34" y1="7" x2="34" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="29" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,29,30)"/><line x1="46" y1="7" x2="46" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="41" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,41,30)"/><line x1="58" y1="7" x2="58" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="53" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,53,30)"/><line x1="70" y1="7" x2="70" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="65" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,65,30)"/></svg><span class="btn-num">6</span></button>
+      <button class="group-btn" data-n="7"><svg viewBox="0 0 80 44" width="74" height="36" xmlns="http://www.w3.org/2000/svg"><text x="40" y="6" text-anchor="middle" font-size="8" fill="#f5f0e8" font-family="serif" font-weight="bold">7</text><line x1="3" y1="9" x2="3" y2="13" stroke="#f5f0e8" stroke-width="1.5"/><line x1="3" y1="11" x2="77" y2="11" stroke="#f5f0e8" stroke-width="1.5"/><line x1="77" y1="9" x2="77" y2="13" stroke="#f5f0e8" stroke-width="1.5"/><line x1="9" y1="17" x2="75" y2="17" stroke="#f5f0e8" stroke-width="2.5"/><line x1="9" y1="22" x2="75" y2="22" stroke="#f5f0e8" stroke-width="2.5"/><line x1="9" y1="17" x2="9" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="4" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,4,37)"/><line x1="20" y1="17" x2="20" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="15" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,15,37)"/><line x1="31" y1="17" x2="31" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="26" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,26,37)"/><line x1="42" y1="17" x2="42" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="37" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,37,37)"/><line x1="53" y1="17" x2="53" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="48" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,48,37)"/><line x1="64" y1="17" x2="64" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="59" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,59,37)"/><line x1="75" y1="17" x2="75" y2="35" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="70" cy="37" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,70,37)"/></svg><span class="btn-num">7</span></button>
+      <button class="group-btn" data-n="8"><svg viewBox="0 0 90 36" width="84" height="28" xmlns="http://www.w3.org/2000/svg"><line x1="9" y1="7" x2="86" y2="7" stroke="#f5f0e8" stroke-width="2.5"/><line x1="9" y1="12" x2="86" y2="12" stroke="#f5f0e8" stroke-width="2.5"/><line x1="9" y1="7" x2="9" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="4" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,4,30)"/><line x1="20" y1="7" x2="20" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="15" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,15,30)"/><line x1="31" y1="7" x2="31" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="26" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,26,30)"/><line x1="42" y1="7" x2="42" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="37" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,37,30)"/><line x1="53" y1="7" x2="53" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="48" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,48,30)"/><line x1="64" y1="7" x2="64" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="59" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,59,30)"/><line x1="75" y1="7" x2="75" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="70" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,70,30)"/><line x1="86" y1="7" x2="86" y2="28" stroke="#f5f0e8" stroke-width="1.8"/><ellipse cx="81" cy="30" rx="5.5" ry="3.5" fill="#f5f0e8" transform="rotate(-20,81,30)"/></svg><span class="btn-num">8</span></button>
     </div>
   </div>
   <div class="ctl-block">
@@ -304,7 +309,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   <!-- Keyboard — full width row -->
   <div class="kb-block">
     <div class="kb-header">
-      <div class="kb-prompt" id="kb-prompt">Select a group size, then enter your passage</div>
+      <div class="kb-prompt" id="kb-prompt">Select a note grouping, then enter your passage</div>
       <button class="clear-btn" onclick="clearNotes()">Clear</button>
     </div>
     <div class="piano-wrap">
@@ -342,8 +347,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 <div class="settings-overlay" id="help-overlay" onclick="outsideCloseHelp(event)">
   <div class="settings-panel">
     <div class="sp-h2">How to Use <button class="close-btn" onclick="closeHelp()">&#x2715;</button></div>
-    <div class="sp-sec"><div class="sp-h3">What is this?</div><div class="sp-p">Mixed Up Rhythms is a rhythm practice tool for working musicians and serious students. Enter a melodic passage from a piece you are working on, and the app generates that passage written in every rhythm pattern for a given group size — a complete systematic workout in all rhythms.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 1 — Choose a rhythm group size</div><div class="sp-p">Select how many notes are in each rhythm pattern: 3, 4, 5, 6, 7, or 8.</div></div>
+    <div class="sp-sec"><div class="sp-h3">What is this?</div><div class="sp-p">Mixed Up Rhythms is a rhythm practice tool for working musicians and serious students. Enter a melodic passage from a piece you are working on, and the app generates that passage written in every rhythm pattern for a given note grouping — a complete systematic workout in all rhythms.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 1 — Choose a note grouping</div><div class="sp-p">Choose a note grouping by tapping one of the six buttons above.</div></div>
     <div class="sp-sec"><div class="sp-h3">Step 2 — Set clef, key, and instrument</div><div class="sp-p">Choose the clef your instrument reads in and the key of your passage. The instrument setting transposes the audio preview to concert pitch — so if you play B♭ clarinet, what you hear matches what you sound.</div></div>
     <div class="sp-sec"><div class="sp-h3">Step 3 — Name and enter your passage</div><div class="sp-p">Type a document name, then tap notes on the keyboard. Tap a chip's spelling button to cycle enharmonics. Use <strong>&#x25BA; Play Passage</strong> to hear your entry back.</div></div>
     <div class="sp-sec"><div class="sp-h3">Step 4 — Generate</div><div class="sp-p">Tap <strong>Generate Exercises</strong> to produce the full set of rhythm patterns. Use <strong>Export / Print PDF</strong> to export.</div></div>
@@ -448,6 +453,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   function playNote(n) {
     try {
       if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+      // iOS Safari requires resume() after user gesture
+      if (AC.state === 'suspended') AC.resume();
       var f = 440 * Math.pow(2, (midi(n) + transposeOffset() - 69) / 12);
       var o = AC.createOscillator(), g = AC.createGain();
       o.connect(g); g.connect(AC.destination); o.type = 'triangle';
@@ -751,7 +758,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
       }
       if (!k || !k.getAttribute || !k.getAttribute('data-note')) return;
       if (!activeGroup) {
-        document.getElementById('kb-prompt').innerHTML = '<strong>Select a group size first</strong>';
+        document.getElementById('kb-prompt').innerHTML = '<strong>Select a note grouping first</strong>';
         return;
       }
       var raw = k.getAttribute('data-note'), isBlack = raw.indexOf('#') !== -1;
@@ -1254,6 +1261,16 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
   // ── INIT ──────────────────────────────────────────────
   buildPiano();
+  // Unlock AudioContext on first touch for iOS Safari
+  function unlockAudio() {
+    if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state === 'suspended') AC.resume();
+    document.removeEventListener('touchstart', unlockAudio);
+    document.removeEventListener('touchend', unlockAudio);
+  }
+  document.addEventListener('touchstart', unlockAudio, {passive: true});
+  document.addEventListener('touchend', unlockAudio, {passive: true});
+
 })();
 </script>
 
