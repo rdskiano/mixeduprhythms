@@ -1408,9 +1408,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     } else {
       url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
     }
-    fetch(url)
-    .then(function(r){return r.json();})
-    .then(function(d){
+    function showRows(d) {
       var rows = d.rows||[];
       if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
       results.innerHTML = rows.map(function(r){
@@ -1422,8 +1420,29 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
           + '<div class="library-row-meta">'+meta+'</div>'
           + '</div>';
       }).join('');
+    }
+    function fetchErr() { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; }
+    // Try fetch first, fall back to script tag (JSONP) if blocked
+    fetch(url)
+    .then(function(resp) {
+      if (!resp.ok && resp.type === 'opaque') throw new Error('opaque');
+      return resp.text();
     })
-    .catch(function(){ results.innerHTML = '<div class="library-empty">Could not load library.</div>'; });
+    .then(function(t) {
+      try { showRows(JSON.parse(t)); }
+      catch(e) { fetchErr(); }
+    })
+    .catch(function() {
+      // Fallback: JSONP via script tag
+      var cb = 'murCb' + Date.now();
+      var s = document.createElement('script');
+      var done = false;
+      var t = setTimeout(function(){ if(!done){done=true;fetchErr();} if(s.parentNode)s.parentNode.removeChild(s); delete window[cb]; }, 8000);
+      window[cb] = function(d){ done=true; clearTimeout(t); if(s.parentNode)s.parentNode.removeChild(s); delete window[cb]; showRows(d); };
+      s.onerror = function(){ done=true; clearTimeout(t); if(s.parentNode)s.parentNode.removeChild(s); delete window[cb]; fetchErr(); };
+      s.src = url + '&callback=' + cb;
+      document.head.appendChild(s);
+    });
   }
   var SECTION_TO_N = {'Three-Note Rhythm Patterns':3,'Four-Note Rhythm Patterns':4,
     'Five-Note Rhythm Patterns':5,'Six-Note Rhythm Patterns':6,
@@ -1466,21 +1485,27 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     var msg = document.getElementById('signin-msg');
     if (!email) { msg.textContent = 'Please enter your email.'; msg.className = 'modal-msg err'; return; }
     msg.textContent = 'Looking up your profile...'; msg.className = 'modal-msg';
-    fetch(SCRIPT_URL + '?action=library&email=' + encodeURIComponent(email))
-    .then(function(r){return r.json();})
-    .then(function(d){
-      var rows = d.rows||[];
+    var surl = SCRIPT_URL + '?action=library&email=' + encodeURIComponent(email);
+    function applySignin(rows) {
       var p = {email:email};
       if (rows.length>0){p.name=rows[0].name||'';p.instrument=rows[0].instrument||'';}
       setProfile(p);
       msg.textContent = rows.length ? 'Welcome back, '+(p.name||email)+'!' : 'Signed in as '+email;
       msg.className = 'modal-msg ok';
       setTimeout(closeSignin, 1200);
-    })
-    .catch(function(){
-      var p = getProfile(); p.email=email; setProfile(p);
-      msg.textContent = 'Signed in as '+email; msg.className = 'modal-msg ok';
-      setTimeout(closeSignin, 1200);
+    }
+    fetch(surl)
+    .then(function(r){ return r.text(); })
+    .then(function(t){ try { applySignin(JSON.parse(t).rows||[]); } catch(e){ applySignin([]); } })
+    .catch(function() {
+      // Fallback JSONP
+      var cb = 'sigCb' + Date.now();
+      var s = document.createElement('script');
+      var done = false;
+      var t2 = setTimeout(function(){ if(!done){done=true;applySignin([]);} if(s.parentNode)s.parentNode.removeChild(s); delete window[cb]; }, 6000);
+      window[cb] = function(d){ done=true; clearTimeout(t2); if(s.parentNode)s.parentNode.removeChild(s); delete window[cb]; applySignin(d.rows||[]); };
+      s.src = surl + '&callback=' + cb;
+      document.head.appendChild(s);
     });
   }
   window.openSignin=openSignin; window.closeSignin=closeSignin; window.submitSignin=submitSignin;
