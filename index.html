@@ -1408,7 +1408,10 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     } else {
       url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
     }
-    function renderRows(rows) {
+    fetch(url)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var rows = d.rows||[];
       if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
       results.innerHTML = rows.map(function(r){
         var date = r.timestamp ? new Date(r.timestamp).toLocaleDateString() : '';
@@ -1419,15 +1422,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
           + '<div class="library-row-meta">'+meta+'</div>'
           + '</div>';
       }).join('');
-    }
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.onload = function() {
-      try { renderRows(JSON.parse(xhr.responseText).rows || []); }
-      catch(e) { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; }
-    };
-    xhr.onerror = function() { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; };
-    xhr.send();
+    })
+    .catch(function(){ results.innerHTML = '<div class="library-empty">Could not load library.</div>'; });
   }
   var SECTION_TO_N = {'Three-Note Rhythm Patterns':3,'Four-Note Rhythm Patterns':4,
     'Five-Note Rhythm Patterns':5,'Six-Note Rhythm Patterns':6,
@@ -1458,7 +1454,6 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   window.openLibrary=openLibrary; window.closeLibrary=closeLibrary;
   window.switchTab=switchTab; window.doLibrarySearch=doLibrarySearch;
   window.loadFromLibrary=loadFromLibrary;
-  // Sign-in
   function openSignin() {
     var p = getProfile();
     document.getElementById('signin-email').value = p.email || '';
@@ -1471,25 +1466,22 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     var msg = document.getElementById('signin-msg');
     if (!email) { msg.textContent = 'Please enter your email.'; msg.className = 'modal-msg err'; return; }
     msg.textContent = 'Looking up your profile...'; msg.className = 'modal-msg';
-    var signinUrl = SCRIPT_URL + '?action=library&email=' + encodeURIComponent(email);
-    var sxhr = new XMLHttpRequest();
-    sxhr.open('GET', signinUrl, true);
-    sxhr.onload = function() {
-      var rows = [];
-      try { rows = JSON.parse(sxhr.responseText).rows || []; } catch(e) {}
-      var p = {email: email};
-      if (rows.length > 0) { p.name = rows[0].name || ''; p.instrument = rows[0].instrument || ''; }
+    fetch(SCRIPT_URL + '?action=library&email=' + encodeURIComponent(email))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var rows = d.rows||[];
+      var p = {email:email};
+      if (rows.length>0){p.name=rows[0].name||'';p.instrument=rows[0].instrument||'';}
       setProfile(p);
-      msg.textContent = rows.length ? 'Welcome back, ' + (p.name || email) + '!' : 'Signed in as ' + email;
+      msg.textContent = rows.length ? 'Welcome back, '+(p.name||email)+'!' : 'Signed in as '+email;
       msg.className = 'modal-msg ok';
       setTimeout(closeSignin, 1200);
-    };
-    sxhr.onerror = function() {
-      var p = getProfile(); p.email = email; setProfile(p);
-      msg.textContent = 'Signed in as ' + email; msg.className = 'modal-msg ok';
+    })
+    .catch(function(){
+      var p = getProfile(); p.email=email; setProfile(p);
+      msg.textContent = 'Signed in as '+email; msg.className = 'modal-msg ok';
       setTimeout(closeSignin, 1200);
-    };
-    sxhr.send();
+    });
   }
   window.openSignin=openSignin; window.closeSignin=closeSignin; window.submitSignin=submitSignin;
 
