@@ -1408,20 +1408,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     } else {
       url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
     }
-    // JSONP to bypass CORS for GET requests
-    var cbName = 'murCb_' + Date.now();
-    var script = document.createElement('script');
-    var done = false;
-    var timeout = setTimeout(function() {
-      if (!done) { done=true; results.innerHTML = '<div class="library-empty">Could not load library.</div>'; }
-      if (script.parentNode) script.parentNode.removeChild(script);
-      delete window[cbName];
-    }, 8000);
-    window[cbName] = function(d) {
-      done = true; clearTimeout(timeout);
-      if (script.parentNode) script.parentNode.removeChild(script);
-      delete window[cbName];
-      var rows = d.rows||[];
+    // Use fetch for library GET - works on iOS Safari with redirect:follow
+    function renderRows(rows) {
       if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
       results.innerHTML = rows.map(function(r){
         var date = r.timestamp ? new Date(r.timestamp).toLocaleDateString() : '';
@@ -1432,9 +1420,14 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
           + '<div class="library-row-meta">'+meta+'</div>'
           + '</div>';
       }).join('');
-    };
-    script.src = url + '&callback=' + cbName;
-    document.head.appendChild(script);
+    }
+    fetch(url)
+    .then(function(resp) { return resp.text(); })
+    .then(function(t) {
+      try { renderRows(JSON.parse(t).rows || []); }
+      catch(e) { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; }
+    })
+    .catch(function() { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; });
   }
   var SECTION_TO_N = {'Three-Note Rhythm Patterns':3,'Four-Note Rhythm Patterns':4,
     'Five-Note Rhythm Patterns':5,'Six-Note Rhythm Patterns':6,
@@ -1478,37 +1471,25 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     var msg = document.getElementById('signin-msg');
     if (!email) { msg.textContent = 'Please enter your email.'; msg.className = 'modal-msg err'; return; }
     msg.textContent = 'Looking up your profile...'; msg.className = 'modal-msg';
-    var cbName = 'signinCb_' + Date.now();
-    var script = document.createElement('script');
-    var done = false;
-    var timeout = setTimeout(function() {
-      if (!done) { done=true;
-        // Timeout - just save email and continue
-        var p = getProfile(); p.email = email; setProfile(p);
-        msg.textContent = 'Signed in as ' + email; msg.className = 'modal-msg ok';
-        setTimeout(closeSignin, 1000);
-      }
-      if (script.parentNode) script.parentNode.removeChild(script);
-      delete window[cbName];
-    }, 6000);
-    window[cbName] = function(d) {
-      done = true; clearTimeout(timeout);
-      if (script.parentNode) script.parentNode.removeChild(script);
-      delete window[cbName];
-      var rows = d.rows || [];
+    var signinUrl = SCRIPT_URL + '?action=library&email=' + encodeURIComponent(email);
+    fetch(signinUrl)
+    .then(function(resp) { return resp.text(); })
+    .then(function(t) {
+      var rows = [];
+      try { rows = JSON.parse(t).rows || []; } catch(e) {}
       var p = {email: email};
-      if (rows.length > 0) {
-        // Pull name and instrument from most recent save
-        p.name = rows[0].name || '';
-        p.instrument = rows[0].instrument || '';
-      }
+      if (rows.length > 0) { p.name = rows[0].name || ''; p.instrument = rows[0].instrument || ''; }
       setProfile(p);
       msg.textContent = rows.length ? 'Welcome back, ' + (p.name || email) + '!' : 'Signed in as ' + email;
       msg.className = 'modal-msg ok';
       setTimeout(closeSignin, 1200);
-    };
-    script.src = SCRIPT_URL + '?action=library&email=' + encodeURIComponent(email) + '&callback=' + cbName;
-    document.head.appendChild(script);
+    })
+    .catch(function() {
+      // Fetch failed - just save email anyway
+      var p = getProfile(); p.email = email; setProfile(p);
+      msg.textContent = 'Signed in as ' + email; msg.className = 'modal-msg ok';
+      setTimeout(closeSignin, 1200);
+    });
   }
   window.openSignin=openSignin; window.closeSignin=closeSignin; window.submitSignin=submitSignin;
 
