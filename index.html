@@ -238,7 +238,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 .profile-btn:hover { border-color: var(--accent); color: var(--accent); }
 
 .topbar-btns { display: flex; gap: 6px; align-items: center; flex-shrink: 1; flex-wrap: wrap; justify-content: flex-end; min-width: 0; }
-.topbar-btns .profile-btn { font-size: 0.68rem; padding: 0 8px; height: 26px; white-space: nowrap; }
+.topbar-btns .settings-btn { white-space: nowrap; }
 @media (max-width: 600px) {
   .topbar { padding: 0 10px; height: 52px; }
   .app-title { font-size: 1.1rem; letter-spacing: 0.08em; }
@@ -302,7 +302,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
 <div class="topbar">
   <div style="display:flex;flex-direction:column;gap:1px"><div class="app-title">Mixed Up Rhythms</div><div style="font-family:'Inconsolata',monospace;font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;color:#aaa">Rhythm Pattern Generator</div></div>
-  <div style="topbar-btns"><button class="profile-btn" onclick="openProfile()" id="profile-topbar-btn">△ Profile</button><button class="profile-btn" onclick="openLibrary()">☰ Library</button><button class="profile-btn" onclick="openHelp()">Instructions</button></div>
+  <div class="topbar-btns"><button class="settings-btn" onclick="openProfile()" id="profile-topbar-btn">△ Profile</button><button class="settings-btn" onclick="openLibrary()">☰ Library</button><button class="settings-btn" onclick="openHelp()">Instructions</button></div>
 </div>
 
 <div class="controls">
@@ -1328,7 +1328,14 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   function updateProfileBtn() {
     var p = getProfile();
     var btn = document.getElementById('profile-topbar-btn');
-    if (btn) btn.textContent = p.name ? '△ ' + p.name : '△ Profile';
+    if (!btn) return;
+    if (!p.email) {
+      btn.textContent = '△ Sign In';
+      btn.onclick = openSignin;
+    } else {
+      btn.textContent = '△ ' + (p.name || p.email.split('@')[0]);
+      btn.onclick = openProfile;
+    }
   }
 
   function openProfile() {
@@ -1429,19 +1436,82 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     script.src = url + '&callback=' + cbName;
     document.head.appendChild(script);
   }
+  var SECTION_TO_N = {'Three-Note Rhythm Patterns':3,'Four-Note Rhythm Patterns':4,
+    'Five-Note Rhythm Patterns':5,'Six-Note Rhythm Patterns':6,
+    'Seven-Note Rhythm Patterns':7,'Eight-Note Rhythm Patterns':8};
   function loadFromLibrary(rj) {
     try {
       var r = JSON.parse(rj);
       if (!r.notes) return;
       selNotes = r.notes.split(',').filter(Boolean);
-      updateChips(); upPrompt(); upHint(); checkReady();
       if (r.docName) document.getElementById('doc-name').value = r.docName;
+      if (r.clef) document.getElementById('clef-sel').value = r.clef;
+      if (r.key) document.getElementById('key-sel').value = r.key;
+      var n = SECTION_TO_N[r.grouping];
+      if (n) {
+        activeGroup = n;
+        document.querySelectorAll('.group-btn').forEach(function(b) {
+          b.classList.toggle('active', parseInt(b.dataset.n) === n);
+        });
+      }
+      updateChips(); upPrompt(); upHint(); checkReady();
       closeLibrary();
-    } catch(e) {}
+      setTimeout(function() {
+        var btn = document.getElementById('gen-btn');
+        if (btn && !btn.disabled) btn.click();
+      }, 150);
+    } catch(e) { console.log('loadFromLibrary error:', e); }
   }
   window.openLibrary=openLibrary; window.closeLibrary=closeLibrary;
   window.switchTab=switchTab; window.doLibrarySearch=doLibrarySearch;
   window.loadFromLibrary=loadFromLibrary;
+  // Sign-in
+  function openSignin() {
+    var p = getProfile();
+    document.getElementById('signin-email').value = p.email || '';
+    document.getElementById('signin-msg').textContent = '';
+    document.getElementById('signin-modal').classList.add('open');
+  }
+  function closeSignin() { document.getElementById('signin-modal').classList.remove('open'); }
+  function submitSignin() {
+    var email = document.getElementById('signin-email').value.trim();
+    var msg = document.getElementById('signin-msg');
+    if (!email) { msg.textContent = 'Please enter your email.'; msg.className = 'modal-msg err'; return; }
+    msg.textContent = 'Looking up your profile...'; msg.className = 'modal-msg';
+    var cbName = 'signinCb_' + Date.now();
+    var script = document.createElement('script');
+    var done = false;
+    var timeout = setTimeout(function() {
+      if (!done) { done=true;
+        // Timeout - just save email and continue
+        var p = getProfile(); p.email = email; setProfile(p);
+        msg.textContent = 'Signed in as ' + email; msg.className = 'modal-msg ok';
+        setTimeout(closeSignin, 1000);
+      }
+      if (script.parentNode) script.parentNode.removeChild(script);
+      delete window[cbName];
+    }, 6000);
+    window[cbName] = function(d) {
+      done = true; clearTimeout(timeout);
+      if (script.parentNode) script.parentNode.removeChild(script);
+      delete window[cbName];
+      var rows = d.rows || [];
+      var p = {email: email};
+      if (rows.length > 0) {
+        // Pull name and instrument from most recent save
+        p.name = rows[0].name || '';
+        p.instrument = rows[0].instrument || '';
+      }
+      setProfile(p);
+      msg.textContent = rows.length ? 'Welcome back, ' + (p.name || email) + '!' : 'Signed in as ' + email;
+      msg.className = 'modal-msg ok';
+      setTimeout(closeSignin, 1200);
+    };
+    script.src = SCRIPT_URL + '?action=library&email=' + encodeURIComponent(email) + '&callback=' + cbName;
+    document.head.appendChild(script);
+  }
+  window.openSignin=openSignin; window.closeSignin=closeSignin; window.submitSignin=submitSignin;
+
   updateProfileBtn();
 
   buildPiano();
@@ -1508,6 +1578,17 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     <div class="library-tabs"><div class="library-tab active" id="tab-community" onclick="switchTab('community')">Community</div><div class="library-tab" id="tab-mine" onclick="switchTab('mine')">My Exercises</div></div>
     <div class="library-header" style="padding:10px 24px;"><div class="library-filters"><input class="library-search" id="lib-query" placeholder="Search piece name..." type="text"><select class="library-sel" id="lib-instrument"><option value="">All instruments</option><option>Flute</option><option>Oboe</option><option>Clarinet</option><option>Bassoon</option><option>Saxophone</option><option>Horn</option><option>Trumpet</option><option>Trombone</option><option>Tuba</option><option>Violin</option><option>Viola</option><option>Cello</option><option>Double Bass</option><option>Harp</option><option>Piano</option><option>Percussion</option><option>Voice</option><option>Other</option></select><button class="library-search-btn" onclick="doLibrarySearch()">Search</button></div></div>
     <div class="library-results" id="library-results"><div class="library-empty">Search for exercises or browse the community library.</div></div>
+  </div>
+</div>
+
+<!-- Sign in modal -->
+<div class="modal-overlay" id="signin-modal">
+  <div class="modal-box">
+    <div class="modal-title">Sign In</div>
+    <div class="sp-p" style="font-size:0.82rem;color:#888;margin-bottom:16px;">Enter your email to access your saved exercises on any device.</div>
+    <div class="modal-field"><label class="modal-label">Email</label><input class="modal-input" id="signin-email" type="email" placeholder="you@example.com"></div>
+    <div class="modal-msg" id="signin-msg"></div>
+    <div class="modal-btns"><button class="modal-btn-secondary" onclick="closeSignin()">Cancel</button><button class="modal-btn-primary" onclick="submitSignin()">Sign In</button></div>
   </div>
 </div>
 </body>
