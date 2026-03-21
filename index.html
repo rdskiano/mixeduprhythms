@@ -1408,7 +1408,6 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     } else {
       url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
     }
-    // Use fetch for library GET - works on iOS Safari with redirect:follow
     function renderRows(rows) {
       if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
       results.innerHTML = rows.map(function(r){
@@ -1421,13 +1420,14 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
           + '</div>';
       }).join('');
     }
-    fetch(url)
-    .then(function(resp) { return resp.text(); })
-    .then(function(t) {
-      try { renderRows(JSON.parse(t).rows || []); }
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onload = function() {
+      try { renderRows(JSON.parse(xhr.responseText).rows || []); }
       catch(e) { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; }
-    })
-    .catch(function() { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; });
+    };
+    xhr.onerror = function() { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; };
+    xhr.send();
   }
   var SECTION_TO_N = {'Three-Note Rhythm Patterns':3,'Four-Note Rhythm Patterns':4,
     'Five-Note Rhythm Patterns':5,'Six-Note Rhythm Patterns':6,
@@ -1472,24 +1472,24 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     if (!email) { msg.textContent = 'Please enter your email.'; msg.className = 'modal-msg err'; return; }
     msg.textContent = 'Looking up your profile...'; msg.className = 'modal-msg';
     var signinUrl = SCRIPT_URL + '?action=library&email=' + encodeURIComponent(email);
-    fetch(signinUrl)
-    .then(function(resp) { return resp.text(); })
-    .then(function(t) {
+    var sxhr = new XMLHttpRequest();
+    sxhr.open('GET', signinUrl, true);
+    sxhr.onload = function() {
       var rows = [];
-      try { rows = JSON.parse(t).rows || []; } catch(e) {}
+      try { rows = JSON.parse(sxhr.responseText).rows || []; } catch(e) {}
       var p = {email: email};
       if (rows.length > 0) { p.name = rows[0].name || ''; p.instrument = rows[0].instrument || ''; }
       setProfile(p);
       msg.textContent = rows.length ? 'Welcome back, ' + (p.name || email) + '!' : 'Signed in as ' + email;
       msg.className = 'modal-msg ok';
       setTimeout(closeSignin, 1200);
-    })
-    .catch(function() {
-      // Fetch failed - just save email anyway
+    };
+    sxhr.onerror = function() {
       var p = getProfile(); p.email = email; setProfile(p);
       msg.textContent = 'Signed in as ' + email; msg.className = 'modal-msg ok';
       setTimeout(closeSignin, 1200);
-    });
+    };
+    sxhr.send();
   }
   window.openSignin=openSignin; window.closeSignin=closeSignin; window.submitSignin=submitSignin;
 
