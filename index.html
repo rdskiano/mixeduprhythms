@@ -1326,16 +1326,11 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   function getProfile() { try { return JSON.parse(localStorage.getItem('murProfile')||'{}'); } catch(e) { return {}; } }
   function setProfile(p) { localStorage.setItem('murProfile', JSON.stringify(p)); updateProfileBtn(); }
   function updateProfileBtn() {
-    var p = getProfile();
-    var btn = document.getElementById('profile-topbar-btn');
-    if (!btn) return;
-    if (!p.email) {
-      btn.textContent = '△ Sign In';
-      btn.onclick = openSignin;
-    } else {
-      btn.textContent = '△ ' + (p.name || p.email.split('@')[0]);
-      btn.onclick = openProfile;
-    }
+    var p=getProfile();
+    var btn=document.getElementById('profile-topbar-btn');
+    if(!btn) return;
+    if(!p.email){btn.textContent='△ Sign In';btn.onclick=openSignin;}
+    else{btn.textContent='△ '+(p.name||p.email.split('@')[0]);btn.onclick=openProfile;}
   }
 
   function openProfile() {
@@ -1409,90 +1404,71 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
       url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
     }
     window._libRows = {};
-
-    function renderRows(rows) {
-      if (!rows || !rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
+    function _renderRows(rows) {
+      if (!rows||!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
       results.innerHTML = '';
-      rows.forEach(function(row, i) {
+      rows.forEach(function(row,i) {
         window._libRows[i] = row;
         var date = row.timestamp ? new Date(row.timestamp).toLocaleDateString() : '';
         var meta = [row.composer,row.instrument,row.grouping,row.clef,row.key,date].filter(Boolean).join(' · ');
         var div = document.createElement('div');
         div.className = 'library-row';
         div.innerHTML = '<div class="library-row-title">'+(row.docName||'Untitled')+'</div>'
-          + '<div class="library-row-meta">'+meta+'</div>';
-        div.addEventListener('click', (function(idx){ return function(){ loadFromLibrary(window._libRows[idx]); }; })(i));
+          +'<div class="library-row-meta">'+meta+'</div>';
+        div.addEventListener('click',(function(idx){return function(){loadFromLibrary(window._libRows[idx]);};})(i));
         results.appendChild(div);
       });
     }
-
-    function tryJsonp() {
-      var cb = 'libCb' + Date.now();
-      var s = document.createElement('script');
-      var done = false;
-      var t = setTimeout(function() {
-        if (!done) { done=true; results.innerHTML = '<div class="library-empty">Could not load library.</div>'; }
-        if (s.parentNode) s.parentNode.removeChild(s);
-        delete window[cb];
-      }, 6000);
-      window[cb] = function(data) {
-        done=true; clearTimeout(t);
-        if (s.parentNode) s.parentNode.removeChild(s);
-        delete window[cb];
-        renderRows((data && data.rows) || []);
-      };
-      s.src = url + '&callback=' + cb;
-      document.head.appendChild(s);
+    function _jsonpLib() {
+      var cb='libCb'+Date.now(), s=document.createElement('script'), done=false;
+      var t=setTimeout(function(){if(!done){done=true;results.innerHTML='<div class="library-empty">Could not load library.</div>';}if(s.parentNode)s.parentNode.removeChild(s);delete window[cb];},6000);
+      window[cb]=function(d){done=true;clearTimeout(t);if(s.parentNode)s.parentNode.removeChild(s);delete window[cb];_renderRows((d&&d.rows)||[]);};
+      s.src=url+'&callback='+cb; document.head.appendChild(s);
     }
-
-    fetch(url)
-    .then(function(resp){ return resp.text(); })
-    .then(function(t){
-      try { renderRows(JSON.parse(t).rows || []); }
-      catch(e) { tryJsonp(); }
-    })
-    .catch(function(){ tryJsonp(); });
+    fetch(url).then(function(r){return r.text();})
+    .then(function(t){try{_renderRows(JSON.parse(t).rows||[]);}catch(e){_jsonpLib();}})
+    .catch(function(){_jsonpLib();});
+  }
+  var _S2N={'Three-Note Rhythm Patterns':3,'Four-Note Rhythm Patterns':4,'Five-Note Rhythm Patterns':5,'Six-Note Rhythm Patterns':6,'Seven-Note Rhythm Patterns':7,'Eight-Note Rhythm Patterns':8};
+  function loadFromLibrary(r) {
+    try {
+      if (typeof r==='string') r=JSON.parse(r);
+      if (!r.notes) return;
+      selNotes = r.notes.split(',').filter(Boolean);
+      if (r.docName) document.getElementById('doc-name').value = r.docName;
+      if (r.clef) document.getElementById('clef-sel').value = r.clef;
+      if (r.key) document.getElementById('key-sel').value = r.key;
+      var n=_S2N[r.grouping];
+      if (n) { activeGroup=n; document.querySelectorAll('.group-btn').forEach(function(b){b.classList.toggle('active',parseInt(b.dataset.n)===n);}); }
+      updateChips(); upPrompt(); upHint(); checkReady();
+      closeLibrary();
+      setTimeout(function(){var btn=document.getElementById('gen-btn');if(btn&&!btn.disabled)btn.click();},150);
+    } catch(e){console.log('loadFromLibrary error:',e);}
   }
   window.openLibrary=openLibrary; window.closeLibrary=closeLibrary;
   window.switchTab=switchTab; window.doLibrarySearch=doLibrarySearch;
   window.loadFromLibrary=loadFromLibrary;
-  function openSignin() {
-    var p = getProfile();
-    document.getElementById('signin-email').value = p.email || '';
-    document.getElementById('signin-msg').textContent = '';
-    document.getElementById('signin-modal').classList.add('open');
-  }
-  function closeSignin() { document.getElementById('signin-modal').classList.remove('open'); }
-  function submitSignin() {
-    var email = document.getElementById('signin-email').value.trim();
-    var msg = document.getElementById('signin-msg');
-    if (!email) { msg.textContent = 'Please enter your email.'; msg.className = 'modal-msg err'; return; }
-    msg.textContent = 'Looking up your profile...'; msg.className = 'modal-msg';
-    var surl = SCRIPT_URL + '?action=library&email=' + encodeURIComponent(email);
-    function applySignin(rows) {
-      var p = {email:email};
-      if (rows.length>0){p.name=rows[0].name||'';p.instrument=rows[0].instrument||'';}
+  function openSignin(){var p=getProfile();document.getElementById('signin-email').value=p.email||'';document.getElementById('signin-msg').textContent='';document.getElementById('signin-modal').classList.add('open');}
+  function closeSignin(){document.getElementById('signin-modal').classList.remove('open');}
+  function submitSignin(){
+    var email=document.getElementById('signin-email').value.trim();
+    var msg=document.getElementById('signin-msg');
+    if(!email){msg.textContent='Please enter your email.';msg.className='modal-msg err';return;}
+    msg.textContent='Looking up your profile...';msg.className='modal-msg';
+    function applySignin(rows){
+      var p={email:email};
+      if(rows.length>0){p.name=rows[0].name||'';p.instrument=rows[0].instrument||'';}
       setProfile(p);
-      msg.textContent = rows.length ? 'Welcome back, '+(p.name||email)+'!' : 'Signed in as '+email;
-      msg.className = 'modal-msg ok';
-      setTimeout(closeSignin, 1200);
+      msg.textContent=rows.length?'Welcome back, '+(p.name||email)+'!':'Signed in as '+email;
+      msg.className='modal-msg ok';
+      setTimeout(closeSignin,1200);
     }
-    fetch(surl)
-    .then(function(r){ return r.text(); })
-    .then(function(t){ try { applySignin(JSON.parse(t).rows||[]); } catch(e){ applySignin([]); } })
-    .catch(function() {
-      // Fallback JSONP
-      var cb = 'sigCb' + Date.now();
-      var s = document.createElement('script');
-      var done = false;
-      var t2 = setTimeout(function(){ if(!done){done=true;applySignin([]);} if(s.parentNode)s.parentNode.removeChild(s); delete window[cb]; }, 6000);
-      window[cb] = function(d){ done=true; clearTimeout(t2); if(s.parentNode)s.parentNode.removeChild(s); delete window[cb]; applySignin(d.rows||[]); };
-      s.src = surl + '&callback=' + cb;
-      document.head.appendChild(s);
-    });
+    fetch(SCRIPT_URL+'?action=library&email='+encodeURIComponent(email))
+    .then(function(r){return r.text();})
+    .then(function(t){try{applySignin(JSON.parse(t).rows||[]);}catch(e){applySignin([]);}})
+    .catch(function(){var p=getProfile();p.email=email;setProfile(p);msg.textContent='Signed in as '+email;msg.className='modal-msg ok';setTimeout(closeSignin,1200);});
   }
-  window.openSignin=openSignin; window.closeSignin=closeSignin; window.submitSignin=submitSignin;
-
+  window.openSignin=openSignin;window.closeSignin=closeSignin;window.submitSignin=submitSignin;
   updateProfileBtn();
 
   buildPiano();
