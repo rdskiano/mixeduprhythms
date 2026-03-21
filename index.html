@@ -231,6 +231,45 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   .ex-row svg circle, .ex-row svg polygon, .ex-row svg line,
   .ex-row svg text { fill: black !important; stroke: black !important; }
 }
+
+/* Profile & Save & Library */
+.profile-btn { background: none; border: 1px solid #444; color: #888; padding: 0 12px; height: 30px; font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap; }
+.profile-btn:hover { border-color: var(--accent); color: var(--accent); }
+.save-btn { background: none; border: 1px solid var(--accent); color: var(--accent); padding: 8px 18px; font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap; }
+.save-btn:hover { background: var(--accent); color: white; }
+.modal-overlay { display: none; position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal-box { background: #1a1410; border: 1px solid #333; padding: 28px 32px; max-width: 420px; width: 90%; }
+.modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.12em; color: var(--cream); margin-bottom: 20px; border-bottom: 1px solid #2a231d; padding-bottom: 10px; }
+.modal-field { margin-bottom: 14px; }
+.modal-label { font-family: 'Bebas Neue', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; color: var(--accent); display: block; margin-bottom: 4px; }
+.modal-input { width: 100%; background: #111009; border: 1px solid #333; color: var(--cream); padding: 8px 10px; font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; box-sizing: border-box; }
+.modal-input:focus { outline: 1px solid var(--accent); }
+.modal-select { width: 100%; background: #111009; border: 1px solid #333; color: var(--cream); padding: 8px 10px; font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; box-sizing: border-box; appearance: none; -webkit-appearance: none; }
+.modal-btns { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+.modal-btn-primary { background: var(--accent); color: white; border: none; padding: 8px 20px; font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 0.1em; cursor: pointer; }
+.modal-btn-secondary { background: none; border: 1px solid #444; color: #888; padding: 8px 20px; font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 0.1em; cursor: pointer; }
+.modal-msg { font-family: 'Inconsolata', monospace; font-size: 0.72rem; margin-top: 10px; min-height: 16px; }
+.modal-msg.ok { color: #4caf50; } .modal-msg.err { color: #e57373; }
+.library-panel { display: none; position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,0.75); align-items: flex-start; justify-content: center; padding-top: 60px; }
+.library-panel.open { display: flex; }
+.library-box { background: #1a1410; border: 1px solid #333; width: 90%; max-width: 600px; max-height: 80vh; display: flex; flex-direction: column; }
+.library-header { padding: 16px 24px 10px; border-bottom: 1px solid #2a231d; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.library-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.12em; color: var(--cream); }
+.library-filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.library-search { background: #111009; border: 1px solid #333; color: var(--cream); padding: 5px 10px; font-family: 'Inconsolata', monospace; font-size: 0.75rem; width: 140px; }
+.library-sel { background: #111009; border: 1px solid #333; color: var(--cream); padding: 5px 8px; font-family: 'Inconsolata', monospace; font-size: 0.75rem; appearance: none; -webkit-appearance: none; }
+.library-search-btn { background: var(--accent); color: white; border: none; padding: 5px 12px; font-family: 'Bebas Neue', sans-serif; font-size: 0.8rem; letter-spacing: 0.08em; cursor: pointer; }
+.library-close { background: none; border: 1px solid #444; color: #888; padding: 5px 12px; font-family: 'Bebas Neue', sans-serif; font-size: 0.8rem; letter-spacing: 0.08em; cursor: pointer; }
+.library-tabs { display: flex; border-bottom: 1px solid #2a231d; }
+.library-tab { padding: 8px 20px; font-family: 'Bebas Neue', sans-serif; font-size: 0.8rem; letter-spacing: 0.1em; color: #666; cursor: pointer; border-bottom: 2px solid transparent; }
+.library-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.library-results { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.library-row { padding: 10px 24px; border-bottom: 1px solid #1a1410; cursor: pointer; }
+.library-row:hover { background: #111009; }
+.library-row-title { font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 0.08em; color: var(--cream); }
+.library-row-meta { font-family: 'Inconsolata', monospace; font-size: 0.62rem; color: #666; margin-top: 2px; }
+.library-empty { padding: 24px; font-family: 'Inconsolata', monospace; font-size: 0.72rem; color: #555; text-align: center; }
 </style>
 </head>
 <body>
@@ -244,7 +283,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
 <div class="topbar">
   <div style="display:flex;flex-direction:column;gap:1px"><div class="app-title">Mixed Up Rhythms</div><div style="font-family:'Inconsolata',monospace;font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;color:#aaa">Rhythm Pattern Generator</div></div>
-  <button class="settings-btn" onclick="openHelp()" title="How to use" style="width:auto;padding:0 12px;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.1em">Instructions</button>
+  <div style="display:flex;gap:8px;align-items:center"><button class="profile-btn" onclick="openProfile()" id="profile-topbar-btn">△ Profile</button><button class="settings-btn" onclick="openHelp()" title="How to use" style="width:auto;padding:0 12px;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.1em">Instructions</button></div>
 </div>
 
 <div class="controls">
@@ -325,7 +364,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 <!-- Export bar (shown after generate) -->
 <div class="export-bar" id="export-bar">
   <button class="export-pdf-btn" onclick="doExport()" style="display:none">&#x1F5A8; Export / Print PDF</button>
-  <button class="start-over-btn" id="start-over-btn">&#8635; Start Over</button>
+  <button class="save-btn" onclick="openSave()">▲ Save Exercise</button>  <button class="save-btn" onclick="openLibrary()" style="border-color:#555;color:#888">☰ Library</button>  <button class="start-over-btn" id="start-over-btn">&#8635; Start Over</button>
 </div>
 
 <!-- Output -->
@@ -351,7 +390,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     <div class="sp-sec"><div class="sp-h3">Step 1 — Choose a note grouping</div><div class="sp-p">Choose a note grouping by tapping one of the six buttons above.</div></div>
     <div class="sp-sec"><div class="sp-h3">Step 2 — Set clef, key, and instrument</div><div class="sp-p">Choose the clef your instrument reads in and the key of your passage. The instrument setting transposes the audio preview to concert pitch — so if you play B♭ clarinet, what you hear matches what you sound.</div></div>
     <div class="sp-sec"><div class="sp-h3">Step 3 — Name and enter your passage</div><div class="sp-p">Type a document name, then tap notes on the keyboard. Tap a chip's spelling button to cycle enharmonics. Use <strong>&#x25BA; Play Passage</strong> to hear your entry back.</div></div>
-    <div class="sp-sec"><div class="sp-h3">Step 4 — Generate</div><div class="sp-p">Tap <strong>Generate Exercises</strong> to produce the full set of rhythm patterns. Use <strong>Export / Print PDF</strong> to export.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 4 — Generate</div><div class="sp-p">Tap <strong>Generate Exercises</strong> to produce the full set of rhythm patterns.</div></div>
     <div class="sp-sec"><div class="sp-h3">Tips</div><div class="sp-p">— Your passage plays once through each pattern, stopping when all notes are used.<br>— Any passage length works — a few notes or an entire phrase.<br>— Tap <strong>&#x21BB; Start Over</strong> to reset and begin a new passage.</div></div>
     <div class="sp-sec"><div class="sp-h3">About</div><div class="sp-p">Created by Ralph Skiano, Principal Clarinet of the Detroit Symphony Orchestra.<br><br><a href="/cdn-cgi/l/email-protection#384a5c4b5351595657785f55595154165b5755" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="710315021a18101f1e31161c10181d5f121e1c">[email&#160;protected]</span></a></div></div>
   </div>
@@ -1260,6 +1299,123 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   }
 
   // ── INIT ──────────────────────────────────────────────
+  // PROFILE / SAVE / LIBRARY
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzq28Cqk2LfUXkDp3ygOl2NRhyohWeMCgXeWcvDqzCGJeDL-mEdattHlwDdPGbrPB63OA/exec';
+  var libTab = 'community';
+
+  function getProfile() { try { return JSON.parse(localStorage.getItem('murProfile')||'{}'); } catch(e) { return {}; } }
+  function setProfile(p) { localStorage.setItem('murProfile', JSON.stringify(p)); updateProfileBtn(); }
+  function updateProfileBtn() {
+    var p = getProfile();
+    var btn = document.getElementById('profile-topbar-btn');
+    if (btn) btn.textContent = p.name ? '△ ' + p.name : '△ Profile';
+  }
+
+  function openProfile() {
+    var p = getProfile();
+    document.getElementById('profile-name').value = p.name || '';
+    document.getElementById('profile-email').value = p.email || '';
+    document.getElementById('profile-instrument').value = p.instrument || '';
+    document.getElementById('profile-modal').classList.add('open');
+  }
+  function closeProfile() { document.getElementById('profile-modal').classList.remove('open'); }
+  function saveProfile() {
+    setProfile({ name: document.getElementById('profile-name').value.trim(), email: document.getElementById('profile-email').value.trim(), instrument: document.getElementById('profile-instrument').value });
+    closeProfile();
+  }
+  window.openProfile=openProfile; window.closeProfile=closeProfile; window.saveProfile=saveProfile;
+
+  function openSave() {
+    var p = getProfile();
+    document.getElementById('save-docname').value = document.getElementById('doc-name').value.trim();
+    document.getElementById('save-name').value = p.name || '';
+    document.getElementById('save-email').value = p.email || '';
+    document.getElementById('save-instrument').value = p.instrument || '';
+    var msg = document.getElementById('save-msg');
+    msg.textContent = p.email ? '' : 'Enter your details once to build your personal library.';
+    msg.className = 'modal-msg';
+    document.getElementById('save-modal').classList.add('open');
+  }
+  function closeSave() { document.getElementById('save-modal').classList.remove('open'); }
+  function submitSave() {
+    var name = document.getElementById('save-name').value.trim();
+    var email = document.getElementById('save-email').value.trim();
+    var instrument = document.getElementById('save-instrument').value;
+    var docName = document.getElementById('save-docname').value.trim();
+    var msg = document.getElementById('save-msg');
+    if (!email) { msg.textContent = 'Please enter your email.'; msg.className = 'modal-msg err'; return; }
+    if (!instrument) { msg.textContent = 'Please select your instrument.'; msg.className = 'modal-msg err'; return; }
+    setProfile({name:name, email:email, instrument:instrument});
+    var payload = { action:'save', name:name, email:email, instrument:instrument, docName:docName, grouping:g2s(activeGroup), clef:cClef(), key:document.getElementById('key-sel').value, notes:selNotes.join(',') };
+    msg.textContent = 'Saving...'; msg.className = 'modal-msg';
+    // Apps Script CORS workaround: use no-cors mode, can't read response
+    // so we optimistically show success after a short delay
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'text/plain'},
+      body: JSON.stringify(payload)
+    })
+    .then(function() {
+      msg.textContent = 'Saved!'; msg.className = 'modal-msg ok';
+      setTimeout(closeSave, 1200);
+    })
+    .catch(function() { msg.textContent = 'Connection error. Please try again.'; msg.className = 'modal-msg err'; });
+  }
+  window.openSave=openSave; window.closeSave=closeSave; window.submitSave=submitSave;
+
+  function openLibrary() { document.getElementById('library-panel').classList.add('open'); doLibrarySearch(); }
+  function closeLibrary() { document.getElementById('library-panel').classList.remove('open'); }
+  function switchTab(tab) {
+    libTab = tab;
+    document.getElementById('tab-community').className = 'library-tab'+(tab==='community'?' active':'');
+    document.getElementById('tab-mine').className = 'library-tab'+(tab==='mine'?' active':'');
+    doLibrarySearch();
+  }
+  function doLibrarySearch() {
+    var results = document.getElementById('library-results');
+    results.innerHTML = '<div class="library-empty">Loading...</div>';
+    var q = document.getElementById('lib-query').value.trim();
+    var inst = document.getElementById('lib-instrument').value;
+    var p = getProfile(), url;
+    if (libTab === 'mine') {
+      if (!p.email) { results.innerHTML = '<div class="library-empty">Set up your profile to see your saved exercises.</div>'; return; }
+      url = SCRIPT_URL + '?action=library&email=' + encodeURIComponent(p.email);
+    } else {
+      url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
+    }
+    fetch(url)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var rows = d.rows||[];
+      if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
+      results.innerHTML = rows.map(function(r){
+        var date = r.timestamp ? new Date(r.timestamp).toLocaleDateString() : '';
+        var meta = [r.instrument,r.grouping,r.clef,r.key,date].filter(Boolean).join(' · ');
+        var rj = encodeURIComponent(JSON.stringify(r));
+        return '<div class="library-row" onclick="loadFromLibrary(decodeURIComponent(\'' + rj + '\'))">'
+          + '<div class="library-row-title">'+(r.docName||'Untitled')+'</div>'
+          + '<div class="library-row-meta">'+meta+'</div>'
+          + '</div>';
+      }).join('');
+    })
+    .catch(function(){ results.innerHTML = '<div class="library-empty">Could not load library.</div>'; });
+  }
+  function loadFromLibrary(rj) {
+    try {
+      var r = JSON.parse(rj);
+      if (!r.notes) return;
+      selNotes = r.notes.split(',').filter(Boolean);
+      updateChips(); upPrompt(); upHint(); checkReady();
+      if (r.docName) document.getElementById('doc-name').value = r.docName;
+      closeLibrary();
+    } catch(e) {}
+  }
+  window.openLibrary=openLibrary; window.closeLibrary=closeLibrary;
+  window.switchTab=switchTab; window.doLibrarySearch=doLibrarySearch;
+  window.loadFromLibrary=loadFromLibrary;
+  updateProfileBtn();
+
   buildPiano();
   // Unlock AudioContext on first touch for iOS Safari
   function unlockAudio() {
@@ -1284,6 +1440,40 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     </div>
   </div>
   <div class="print-content" id="print-content"></div>
+</div>
+
+<!-- Profile modal -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal-box">
+    <div class="modal-title">Your Profile</div>
+    <div class="modal-field"><label class="modal-label">Name</label><input class="modal-input" id="profile-name" type="text" placeholder="Your name"></div>
+    <div class="modal-field"><label class="modal-label">Email</label><input class="modal-input" id="profile-email" type="email" placeholder="you@example.com"></div>
+    <div class="modal-field"><label class="modal-label">Your Instrument</label><select class="modal-select" id="profile-instrument"><option value="">Select instrument...</option><option>Flute</option><option>Oboe</option><option>Clarinet</option><option>Bassoon</option><option>Saxophone</option><option>Horn</option><option>Trumpet</option><option>Trombone</option><option>Tuba</option><option>Violin</option><option>Viola</option><option>Cello</option><option>Double Bass</option><option>Harp</option><option>Piano</option><option>Percussion</option><option>Voice</option><option>Other</option></select></div>
+    <div class="modal-btns"><button class="modal-btn-secondary" onclick="closeProfile()">Cancel</button><button class="modal-btn-primary" onclick="saveProfile()">Save Profile</button></div>
+  </div>
+</div>
+
+<!-- Save modal -->
+<div class="modal-overlay" id="save-modal">
+  <div class="modal-box">
+    <div class="modal-title">Save Exercise</div>
+    <div class="modal-field"><label class="modal-label">Document Name</label><input class="modal-input" id="save-docname" type="text" placeholder="e.g. Brahms mvt 1"></div>
+    <div class="modal-field"><label class="modal-label">Name</label><input class="modal-input" id="save-name" type="text" placeholder="Your name"></div>
+    <div class="modal-field"><label class="modal-label">Email</label><input class="modal-input" id="save-email" type="email" placeholder="you@example.com"></div>
+    <div class="modal-field"><label class="modal-label">Instrument</label><select class="modal-select" id="save-instrument"><option value="">Select instrument...</option><option>Flute</option><option>Oboe</option><option>Clarinet</option><option>Bassoon</option><option>Saxophone</option><option>Horn</option><option>Trumpet</option><option>Trombone</option><option>Tuba</option><option>Violin</option><option>Viola</option><option>Cello</option><option>Double Bass</option><option>Harp</option><option>Piano</option><option>Percussion</option><option>Voice</option><option>Other</option></select></div>
+    <div class="modal-msg" id="save-msg"></div>
+    <div class="modal-btns"><button class="modal-btn-secondary" onclick="closeSave()">Cancel</button><button class="modal-btn-primary" onclick="submitSave()">Save</button></div>
+  </div>
+</div>
+
+<!-- Library panel -->
+<div class="library-panel" id="library-panel">
+  <div class="library-box">
+    <div class="library-header"><div class="library-title">Exercise Library</div><button class="library-close" onclick="closeLibrary()">✕ Close</button></div>
+    <div class="library-tabs"><div class="library-tab active" id="tab-community" onclick="switchTab('community')">Community</div><div class="library-tab" id="tab-mine" onclick="switchTab('mine')">My Exercises</div></div>
+    <div class="library-header" style="padding:10px 24px;"><div class="library-filters"><input class="library-search" id="lib-query" placeholder="Search piece name..." type="text"><select class="library-sel" id="lib-instrument"><option value="">All instruments</option><option>Flute</option><option>Oboe</option><option>Clarinet</option><option>Bassoon</option><option>Saxophone</option><option>Horn</option><option>Trumpet</option><option>Trombone</option><option>Tuba</option><option>Violin</option><option>Viola</option><option>Cello</option><option>Double Bass</option><option>Harp</option><option>Piano</option><option>Percussion</option><option>Voice</option><option>Other</option></select><button class="library-search-btn" onclick="doLibrarySearch()">Search</button></div></div>
+    <div class="library-results" id="library-results"><div class="library-empty">Search for exercises or browse the community library.</div></div>
+  </div>
 </div>
 </body>
 </html>
