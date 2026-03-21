@@ -1346,19 +1346,18 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     if (!email) { msg.textContent = 'Please enter your email.'; msg.className = 'modal-msg err'; return; }
     if (!instrument) { msg.textContent = 'Please select your instrument.'; msg.className = 'modal-msg err'; return; }
     setProfile({name:name, email:email, instrument:instrument});
-    var payload = { action:'save', name:name, email:email, instrument:instrument, docName:docName, grouping:g2s(activeGroup), clef:cClef(), key:document.getElementById('key-sel').value, notes:selNotes.join(',') };
+    var composer = document.getElementById('save-composer').value.trim();
+    var payload = { action:'save', name:name, email:email, instrument:instrument, docName:docName, composer:composer, grouping:g2s(activeGroup), clef:cClef(), key:document.getElementById('key-sel').value, notes:selNotes.join(',') };
     msg.textContent = 'Saving...'; msg.className = 'modal-msg';
-    // Apps Script CORS workaround: use no-cors mode, can't read response
-    // so we optimistically show success after a short delay
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type': 'text/plain'},
-      body: JSON.stringify(payload)
-    })
-    .then(function() {
-      msg.textContent = 'Saved!'; msg.className = 'modal-msg ok';
-      setTimeout(closeSave, 1200);
+    // Use GET with URL params to avoid CORS issues with Apps Script
+    var params = Object.keys(payload).map(function(k) {
+      return encodeURIComponent(k) + '=' + encodeURIComponent(payload[k]);
+    }).join('&');
+    fetch(SCRIPT_URL + '?' + params)
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success) { msg.textContent = 'Saved!'; msg.className = 'modal-msg ok'; setTimeout(closeSave, 1200); }
+      else { msg.textContent = 'Error: '+(d.error||'Unknown'); msg.className = 'modal-msg err'; }
     })
     .catch(function() { msg.textContent = 'Connection error. Please try again.'; msg.className = 'modal-msg err'; });
   }
@@ -1391,7 +1390,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
       if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
       results.innerHTML = rows.map(function(r){
         var date = r.timestamp ? new Date(r.timestamp).toLocaleDateString() : '';
-        var meta = [r.instrument,r.grouping,r.clef,r.key,date].filter(Boolean).join(' · ');
+        var meta = [r.composer,r.instrument,r.grouping,r.clef,r.key,date].filter(Boolean).join(' · ');
         var rj = encodeURIComponent(JSON.stringify(r));
         return '<div class="library-row" onclick="loadFromLibrary(decodeURIComponent(\'' + rj + '\'))">'
           + '<div class="library-row-title">'+(r.docName||'Untitled')+'</div>'
@@ -1458,6 +1457,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   <div class="modal-box">
     <div class="modal-title">Save Exercise</div>
     <div class="modal-field"><label class="modal-label">Document Name</label><input class="modal-input" id="save-docname" type="text" placeholder="e.g. Brahms mvt 1"></div>
+    <div class="modal-field"><label class="modal-label">Composer Last Name</label><input class="modal-input" id="save-composer" type="text" placeholder="e.g. Brahms"></div>
     <div class="modal-field"><label class="modal-label">Name</label><input class="modal-input" id="save-name" type="text" placeholder="Your name"></div>
     <div class="modal-field"><label class="modal-label">Email</label><input class="modal-input" id="save-email" type="email" placeholder="you@example.com"></div>
     <div class="modal-field"><label class="modal-label">Instrument</label><select class="modal-select" id="save-instrument"><option value="">Select instrument...</option><option>Flute</option><option>Oboe</option><option>Clarinet</option><option>Bassoon</option><option>Saxophone</option><option>Horn</option><option>Trumpet</option><option>Trombone</option><option>Tuba</option><option>Violin</option><option>Viola</option><option>Cello</option><option>Double Bass</option><option>Harp</option><option>Piano</option><option>Percussion</option><option>Voice</option><option>Other</option></select></div>
