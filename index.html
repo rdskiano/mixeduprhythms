@@ -233,8 +233,9 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 }
 
 /* Profile & Save & Library */
-.profile-btn { background: none; border: 1px solid #444; color: #888; padding: 0 12px; height: 30px; font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap; }
+.profile-btn { background: none; border: 1px solid #444; color: #888; padding: 0 12px; height: 30px; font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap; transition: all 0.12s; }
 .profile-btn:hover { border-color: var(--accent); color: var(--accent); }
+.profile-btn.active { border-color: var(--accent); color: var(--accent); }
 .save-btn { background: none; border: 1px solid var(--accent); color: var(--accent); padding: 8px 18px; font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap; }
 .save-btn:hover { background: var(--accent); color: white; }
 .modal-overlay { display: none; position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; }
@@ -283,7 +284,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
 <div class="topbar">
   <div style="display:flex;flex-direction:column;gap:1px"><div class="app-title">Mixed Up Rhythms</div><div style="font-family:'Inconsolata',monospace;font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;color:#aaa">Rhythm Pattern Generator</div></div>
-  <div style="display:flex;gap:8px;align-items:center"><button class="profile-btn" onclick="openProfile()" id="profile-topbar-btn">△ Profile</button><button class="settings-btn" onclick="openHelp()" title="How to use" style="width:auto;padding:0 12px;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.1em">Instructions</button></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="settings-btn" onclick="openProfile()" id="profile-topbar-btn" style="width:auto;padding:0 12px;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.1em">△ Profile</button><button class="settings-btn" onclick="openLibrary()" style="width:auto;padding:0 12px;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.1em">☰ Library</button><button class="settings-btn" onclick="openHelp()" style="width:auto;padding:0 12px;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.1em">Instructions</button></div>
 </div>
 
 <div class="controls">
@@ -391,6 +392,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     <div class="sp-sec"><div class="sp-h3">Step 2 — Set clef, key, and instrument</div><div class="sp-p">Choose the clef your instrument reads in and the key of your passage. The instrument setting transposes the audio preview to concert pitch — so if you play B♭ clarinet, what you hear matches what you sound.</div></div>
     <div class="sp-sec"><div class="sp-h3">Step 3 — Name and enter your passage</div><div class="sp-p">Type a document name, then tap notes on the keyboard. Tap a chip's spelling button to cycle enharmonics. Use <strong>&#x25BA; Play Passage</strong> to hear your entry back.</div></div>
     <div class="sp-sec"><div class="sp-h3">Step 4 — Generate</div><div class="sp-p">Tap <strong>Generate Exercises</strong> to produce the full set of rhythm patterns.</div></div>
+    <div class="sp-sec"><div class="sp-h3">Step 5 — Save &amp; explore</div><div class="sp-p">Tap <strong>▲ Save Exercise</strong> to save your exercise to your personal library. You'll be asked for your name, email, and instrument once — the app remembers you after that. Use <strong>☰ Library</strong> to browse your saved exercises or search the community library by instrument or composer.</div></div>
     <div class="sp-sec"><div class="sp-h3">Tips</div><div class="sp-p">— Your passage plays once through each pattern, stopping when all notes are used.<br>— Any passage length works — a few notes or an entire phrase.<br>— Tap <strong>&#x21BB; Start Over</strong> to reset and begin a new passage.</div></div>
     <div class="sp-sec"><div class="sp-h3">About</div><div class="sp-p">Created by Ralph Skiano, Principal Clarinet of the Detroit Symphony Orchestra.<br><br><a href="/cdn-cgi/l/email-protection#384a5c4b5351595657785f55595154165b5755" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="710315021a18101f1e31161c10181d5f121e1c">[email&#160;protected]</span></a></div></div>
   </div>
@@ -1381,9 +1383,11 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     } else {
       url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
     }
-    fetch(url)
-    .then(function(r){return r.json();})
-    .then(function(d){
+    fetch(url, {redirect: 'follow'})
+    .then(function(r){return r.text();})
+    .then(function(t){
+      var d;
+      try { d = JSON.parse(t); } catch(e) { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; return; }
       var rows = d.rows||[];
       if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
       results.innerHTML = rows.map(function(r){
