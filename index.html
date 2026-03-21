@@ -1408,48 +1408,36 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     } else {
       url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
     }
-    function showRows(d) {
+    // Store rows in a cache for onclick access - avoids JSON-in-HTML escaping issues
+    window._libRows = {};
+    fetch(url)
+    .then(function(resp){ return resp.text(); })
+    .then(function(t){
+      var d;
+      try { d = JSON.parse(t); } catch(e) { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; return; }
       var rows = d.rows||[];
       if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
-      results.innerHTML = rows.map(function(r){
-        var date = r.timestamp ? new Date(r.timestamp).toLocaleDateString() : '';
-        var meta = [r.composer,r.instrument,r.grouping,r.clef,r.key,date].filter(Boolean).join(' · ');
-        var rj = encodeURIComponent(JSON.stringify(r));
-        return '<div class="library-row" onclick="loadFromLibrary(decodeURIComponent(\'' + rj + '\'))">'
-          + '<div class="library-row-title">'+(r.docName||'Untitled')+'</div>'
-          + '<div class="library-row-meta">'+meta+'</div>'
-          + '</div>';
-      }).join('');
-    }
-    function fetchErr() { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; }
-    // Try fetch first, fall back to script tag (JSONP) if blocked
-    fetch(url)
-    .then(function(resp) {
-      if (!resp.ok && resp.type === 'opaque') throw new Error('opaque');
-      return resp.text();
+      results.innerHTML = '';
+      rows.forEach(function(row, i) {
+        window._libRows[i] = row;
+        var date = row.timestamp ? new Date(row.timestamp).toLocaleDateString() : '';
+        var meta = [row.composer,row.instrument,row.grouping,row.clef,row.key,date].filter(Boolean).join(' · ');
+        var div = document.createElement('div');
+        div.className = 'library-row';
+        div.innerHTML = '<div class="library-row-title">' + (row.docName||'Untitled') + '</div>'
+          + '<div class="library-row-meta">' + meta + '</div>';
+        div.addEventListener('click', (function(idx){ return function(){ loadFromLibrary(JSON.stringify(window._libRows[idx])); }; })(i));
+        results.appendChild(div);
+      });
     })
-    .then(function(t) {
-      try { showRows(JSON.parse(t)); }
-      catch(e) { fetchErr(); }
-    })
-    .catch(function() {
-      // Fallback: JSONP via script tag
-      var cb = 'murCb' + Date.now();
-      var s = document.createElement('script');
-      var done = false;
-      var t = setTimeout(function(){ if(!done){done=true;fetchErr();} if(s.parentNode)s.parentNode.removeChild(s); delete window[cb]; }, 8000);
-      window[cb] = function(d){ done=true; clearTimeout(t); if(s.parentNode)s.parentNode.removeChild(s); delete window[cb]; showRows(d); };
-      s.onerror = function(){ done=true; clearTimeout(t); if(s.parentNode)s.parentNode.removeChild(s); delete window[cb]; fetchErr(); };
-      s.src = url + '&callback=' + cb;
-      document.head.appendChild(s);
-    });
+    .catch(function(){ results.innerHTML = '<div class="library-empty">Could not load library.</div>'; });
   }
   var SECTION_TO_N = {'Three-Note Rhythm Patterns':3,'Four-Note Rhythm Patterns':4,
     'Five-Note Rhythm Patterns':5,'Six-Note Rhythm Patterns':6,
     'Seven-Note Rhythm Patterns':7,'Eight-Note Rhythm Patterns':8};
   function loadFromLibrary(rj) {
     try {
-      var r = JSON.parse(rj);
+      var r = typeof rj === 'string' ? JSON.parse(rj) : rj;
       if (!r.notes) return;
       selNotes = r.notes.split(',').filter(Boolean);
       if (r.docName) document.getElementById('doc-name').value = r.docName;
