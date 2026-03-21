@@ -1321,7 +1321,20 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
   // ── INIT ──────────────────────────────────────────────
   // PROFILE / SAVE / LIBRARY
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzq28Cqk2LfUXkDp3ygOl2NRhyohWeMCgXeWcvDqzCGJeDL-mEdattHlwDdPGbrPB63OA/exec';
+  var SB_URL = 'https://twjdatheptwcskqhinie.supabase.co';
+  var SB_KEY = 'sb_publishable_BwKwqYjD_TTeL2BTu7jpTw_YQfdqvQ7';
+  var SB_HEADERS = {'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation'};
+
+  function sbGet(path) {
+    return fetch(SB_URL + path, {method:'GET', headers: {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+  }
+  function sbPost(path, body) {
+    return fetch(SB_URL + path, {method:'POST', headers: SB_HEADERS, body: JSON.stringify(body)});
+  }
+  function sbUpsert(path, body) {
+    return fetch(SB_URL + path, {method:'POST', headers: Object.assign({}, SB_HEADERS, {'Prefer':'resolution=merge-duplicates,return=representation'}), body: JSON.stringify(body)});
+  }
+
   var libTab = 'community';
 
   function getProfile() { try { return JSON.parse(localStorage.getItem('murProfile')||'{}'); } catch(e) { return {}; } }
@@ -1369,31 +1382,26 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     if (!instrument) { msg.textContent = 'Please select your instrument.'; msg.className = 'modal-msg err'; return; }
     setProfile({name:name, email:email, instrument:instrument});
     var composer = document.getElementById('save-composer').value.trim();
-    var payload = { action:'save', name:name, email:email, instrument:instrument, docName:docName, composer:composer, grouping:g2s(activeGroup), clef:cClef(), key:document.getElementById('key-sel').value, notes:selNotes.join(',') };
     msg.textContent = 'Saving...'; msg.className = 'modal-msg';
-    // Use GET with URL params to avoid CORS issues with Apps Script
-    var params = Object.keys(payload).map(function(k) {
-      return encodeURIComponent(k) + '=' + encodeURIComponent(payload[k]);
-    }).join('&');
-    // Use script tag (JSONP) - only method that bypasses CORS redirect
-    var scb = 'saveCb' + Date.now();
-    var ss = document.createElement('script');
-    var sdone = false;
-    var st = setTimeout(function() {
-      if (!sdone) { sdone=true; msg.textContent='Saved!'; msg.className='modal-msg ok'; setTimeout(closeSave,1200); }
-      if (ss.parentNode) ss.parentNode.removeChild(ss);
-      delete window[scb];
-    }, 5000);
-    window[scb] = function(d) {
-      sdone=true; clearTimeout(st);
-      if (ss.parentNode) ss.parentNode.removeChild(ss);
-      delete window[scb];
-      msg.textContent = d.success ? 'Saved!' : 'Error saving.';
-      msg.className = d.success ? 'modal-msg ok' : 'modal-msg err';
-      if (d.success) setTimeout(closeSave, 1200);
-    };
-    ss.src = SCRIPT_URL + '?' + params + '&callback=' + scb;
-    document.head.appendChild(ss);
+    // Save to Supabase
+    var row = {user_email:email, doc_name:docName, composer:composer,
+      grouping:g2s(activeGroup), clef:cClef(),
+      key:document.getElementById('key-sel').value, notes:selNotes.join(','),
+      instrument:instrument};
+    // Upsert profile
+    sbUpsert('/rest/v1/profiles', {email:email, name:name, instrument:instrument})
+    .then(function(){
+      return sbPost('/rest/v1/exercises', row);
+    })
+    .then(function(r){
+      if(r.ok||r.status===201){
+        msg.textContent='Saved!'; msg.className='modal-msg ok';
+        setTimeout(closeSave,1200);
+      } else {
+        return r.text().then(function(t){ throw new Error(t); });
+      }
+    })
+    .catch(function(e){ msg.textContent='Error saving.'; msg.className='modal-msg err'; console.log('save error',e); });
   }
   window.openSave=openSave; window.closeSave=closeSave; window.submitSave=submitSave;
 
@@ -1410,43 +1418,68 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     results.innerHTML = '<div class="library-empty">Loading...</div>';
     var q = document.getElementById('lib-query').value.trim();
     var inst = document.getElementById('lib-instrument').value;
-    var p = getProfile(), url;
-    if (libTab === 'mine') {
-      if (!p.email) { results.innerHTML = '<div class="library-empty">Set up your profile to see your saved exercises.</div>'; return; }
-      url = SCRIPT_URL + '?action=library&email=' + encodeURIComponent(p.email);
-    } else {
-      url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
-    }
+    var p = getProfile();
+    if (libTab === 'mine' && !p.email) { results.innerHTML = '<div class="library-empty">Sign in to see your saved exercises.</div>'; return; }
     window._libRows = {};
-    var lcb = 'libCb' + Date.now();
-    var ls = document.createElement('script');
-    var ldone = false;
-    var lt = setTimeout(function() {
-      if (!ldone) { ldone=true; results.innerHTML = '<div class="library-empty">Could not load library.</div>'; }
-      if (ls.parentNode) ls.parentNode.removeChild(ls);
-      delete window[lcb];
-    }, 8000);
-    window[lcb] = function(d) {
-      ldone=true; clearTimeout(lt);
-      if (ls.parentNode) ls.parentNode.removeChild(ls);
-      delete window[lcb];
-      var rows = d.rows||[];
-      if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
-      results.innerHTML = '';
-      rows.forEach(function(row,i) {
-        window._libRows[i] = row;
-        var date = row.timestamp ? new Date(row.timestamp).toLocaleDateString() : '';
-        var meta = [row.composer,row.instrument,row.grouping,row.clef,row.key,date].filter(Boolean).join(' · ');
-        var div = document.createElement('div');
-        div.className = 'library-row';
-        div.innerHTML = '<div class="library-row-title">'+(row.docName||'Untitled')+'</div>'
-          +'<div class="library-row-meta">'+meta+'</div>';
-        div.addEventListener('click',(function(idx){return function(){loadFromLibrary(window._libRows[idx]);};})(i));
-        results.appendChild(div);
+    // Build Supabase query URL
+    var sbPath;
+    if (libTab === 'mine') {
+      sbPath = '/rest/v1/exercises?user_email=eq.' + encodeURIComponent(p.email) + '&order=created_at.desc&limit=50';
+    } else {
+      sbPath = '/rest/v1/exercises?order=created_at.desc&limit=50';
+      if (inst) sbPath += '&instrument=eq.' + encodeURIComponent(inst);
+      // Also join profile to get instrument - for now filter on exercises
+    }
+    // Also need instrument from profiles for community - use exercises table instrument field
+    // First get exercises, then get profile instrument
+    sbGet(sbPath)
+    .then(function(r){return r.json();})
+    .then(function(rows){
+      if (!rows||!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
+      // Get profiles for these emails to show instrument
+      var emails = [...new Set(rows.map(function(r){return r.user_email;}))];
+      sbGet('/rest/v1/profiles?email=in.('+emails.map(encodeURIComponent).join(',')+')')
+      .then(function(r2){return r2.json();})
+      .then(function(profiles){
+        var profMap = {};
+        (profiles||[]).forEach(function(pr){profMap[pr.email]=pr;});
+        results.innerHTML = '';
+        rows.forEach(function(row,i){
+          window._libRows[i] = row;
+          var prof = profMap[row.user_email]||{};
+          var date = row.created_at ? new Date(row.created_at).toLocaleDateString() : '';
+          var meta = [row.composer,prof.instrument,row.grouping,row.clef,row.key,date].filter(Boolean).join(' · ');
+          var div = document.createElement('div');
+          div.className = 'library-row';
+          div.innerHTML = '<div class="library-row-title">'+(row.doc_name||'Untitled')+'</div>'
+            +'<div class="library-row-meta">'+meta+'</div>';
+          div.addEventListener('click',(function(idx){return function(){
+            var r=window._libRows[idx];
+            loadFromLibrary({notes:r.notes,docName:r.doc_name,clef:r.clef,key:r.key,grouping:r.grouping});
+          };})(i));
+          results.appendChild(div);
+        });
+      })
+      .catch(function(){
+        // If profile fetch fails, show without instrument
+        results.innerHTML = '';
+        rows.forEach(function(row,i){
+          window._libRows[i] = row;
+          var date = row.created_at ? new Date(row.created_at).toLocaleDateString() : '';
+          var meta = [row.composer,row.grouping,row.clef,row.key,date].filter(Boolean).join(' · ');
+          var div = document.createElement('div');
+          div.className = 'library-row';
+          div.innerHTML = '<div class="library-row-title">'+(row.doc_name||'Untitled')+'</div>'
+            +'<div class="library-row-meta">'+meta+'</div>';
+          div.addEventListener('click',(function(idx){return function(){
+            var r=window._libRows[idx];
+            loadFromLibrary({notes:r.notes,docName:r.doc_name,clef:r.clef,key:r.key,grouping:r.grouping});
+          };})(i));
+          results.appendChild(div);
+        });
       });
-    };
-    ls.src = url + '&callback=' + lcb;
-    document.head.appendChild(ls);
+    })
+    .catch(function(){ results.innerHTML = '<div class="library-empty">Could not load library.</div>'; });
   }
   var _S2N={'Three-Note Rhythm Patterns':3,'Four-Note Rhythm Patterns':4,'Five-Note Rhythm Patterns':5,'Six-Note Rhythm Patterns':6,'Seven-Note Rhythm Patterns':7,'Eight-Note Rhythm Patterns':8};
   function loadFromLibrary(r) {
@@ -1474,15 +1507,21 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     var msg=document.getElementById('signin-msg');
     if(!email){msg.textContent='Please enter your email.';msg.className='modal-msg err';return;}
     msg.textContent='Looking up your profile...';msg.className='modal-msg';
-    var scb2='sigCb'+Date.now(), ss2=document.createElement('script'), sdone2=false;
-    var st2=setTimeout(function(){if(!sdone2){sdone2=true;var p=getProfile();p.email=email;setProfile(p);msg.textContent='Signed in as '+email;msg.className='modal-msg ok';setTimeout(closeSignin,1200);}if(ss2.parentNode)ss2.parentNode.removeChild(ss2);delete window[scb2];},6000);
-    window[scb2]=function(d){sdone2=true;clearTimeout(st2);if(ss2.parentNode)ss2.parentNode.removeChild(ss2);delete window[scb2];
-      var rows=d.rows||[],p={email:email};
-      if(rows.length>0){p.name=rows[0].name||'';p.instrument=rows[0].instrument||'';}
-      setProfile(p);msg.textContent=rows.length?'Welcome back, '+(p.name||email)+'!':'Signed in as '+email;msg.className='modal-msg ok';setTimeout(closeSignin,1200);
-    };
-    ss2.src=SCRIPT_URL+'?action=library&email='+encodeURIComponent(email)+'&callback='+scb2;
-    document.head.appendChild(ss2);
+    sbGet('/rest/v1/profiles?email=eq.'+encodeURIComponent(email)+'&limit=1')
+    .then(function(r){return r.json();})
+    .then(function(rows){
+      var p={email:email};
+      if(rows&&rows.length>0){p.name=rows[0].name||'';p.instrument=rows[0].instrument||'';}
+      setProfile(p);
+      msg.textContent=rows&&rows.length?'Welcome back, '+(p.name||email)+'!':'Signed in as '+email;
+      msg.className='modal-msg ok';
+      setTimeout(closeSignin,1200);
+    })
+    .catch(function(){
+      var p=getProfile();p.email=email;setProfile(p);
+      msg.textContent='Signed in as '+email;msg.className='modal-msg ok';
+      setTimeout(closeSignin,1200);
+    });
   }
   window.openSignin=openSignin;window.closeSignin=closeSignin;window.submitSignin=submitSignin;
   updateProfileBtn();
