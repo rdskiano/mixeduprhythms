@@ -1383,11 +1383,19 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     } else {
       url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
     }
-    fetch(url, {redirect: 'follow'})
-    .then(function(r){return r.text();})
-    .then(function(t){
-      var d;
-      try { d = JSON.parse(t); } catch(e) { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; return; }
+    // JSONP to bypass CORS for GET requests
+    var cbName = 'murCb_' + Date.now();
+    var script = document.createElement('script');
+    var done = false;
+    var timeout = setTimeout(function() {
+      if (!done) { done=true; results.innerHTML = '<div class="library-empty">Could not load library.</div>'; }
+      if (script.parentNode) script.parentNode.removeChild(script);
+      delete window[cbName];
+    }, 8000);
+    window[cbName] = function(d) {
+      done = true; clearTimeout(timeout);
+      if (script.parentNode) script.parentNode.removeChild(script);
+      delete window[cbName];
       var rows = d.rows||[];
       if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
       results.innerHTML = rows.map(function(r){
@@ -1399,8 +1407,9 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
           + '<div class="library-row-meta">'+meta+'</div>'
           + '</div>';
       }).join('');
-    })
-    .catch(function(){ results.innerHTML = '<div class="library-empty">Could not load library.</div>'; });
+    };
+    script.src = url + '&callback=' + cbName;
+    document.head.appendChild(script);
   }
   function loadFromLibrary(rj) {
     try {
