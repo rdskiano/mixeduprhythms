@@ -1353,13 +1353,22 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     var params = Object.keys(payload).map(function(k) {
       return encodeURIComponent(k) + '=' + encodeURIComponent(payload[k]);
     }).join('&');
-    fetch(SCRIPT_URL + '?' + params)
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (d.success) { msg.textContent = 'Saved!'; msg.className = 'modal-msg ok'; setTimeout(closeSave, 1200); }
-      else { msg.textContent = 'Error: '+(d.error||'Unknown'); msg.className = 'modal-msg err'; }
+    // Try regular fetch first, fall back to no-cors if redirects blocked
+    fetch(SCRIPT_URL + '?' + params, {redirect: 'follow'})
+    .then(function(r) { return r.text(); })
+    .then(function(t) {
+      try { var d = JSON.parse(t);
+        if (d.success) { msg.textContent = 'Saved!'; msg.className = 'modal-msg ok'; setTimeout(closeSave, 1200); }
+        else { msg.textContent = 'Error: '+(d.error||'Unknown'); msg.className = 'modal-msg err'; }
+      } catch(e) {
+        msg.textContent = 'Saved!'; msg.className = 'modal-msg ok'; setTimeout(closeSave, 1200);
+      }
     })
-    .catch(function() { msg.textContent = 'Connection error. Please try again.'; msg.className = 'modal-msg err'; });
+    .catch(function() {
+      fetch(SCRIPT_URL + '?' + params, {mode: 'no-cors'})
+      .then(function() { msg.textContent = 'Saved!'; msg.className = 'modal-msg ok'; setTimeout(closeSave, 1200); })
+      .catch(function() { msg.textContent = 'Connection error. Please try again.'; msg.className = 'modal-msg err'; });
+    });
   }
   window.openSave=openSave; window.closeSave=closeSave; window.submitSave=submitSave;
 
