@@ -1408,15 +1408,10 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     } else {
       url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
     }
-    // Store rows in a cache for onclick access - avoids JSON-in-HTML escaping issues
     window._libRows = {};
-    fetch(url)
-    .then(function(resp){ return resp.text(); })
-    .then(function(t){
-      var d;
-      try { d = JSON.parse(t); } catch(e) { results.innerHTML = '<div class="library-empty">Could not load library.</div>'; return; }
-      var rows = d.rows||[];
-      if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
+
+    function renderRows(rows) {
+      if (!rows || !rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
       results.innerHTML = '';
       rows.forEach(function(row, i) {
         window._libRows[i] = row;
@@ -1424,39 +1419,39 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
         var meta = [row.composer,row.instrument,row.grouping,row.clef,row.key,date].filter(Boolean).join(' · ');
         var div = document.createElement('div');
         div.className = 'library-row';
-        div.innerHTML = '<div class="library-row-title">' + (row.docName||'Untitled') + '</div>'
-          + '<div class="library-row-meta">' + meta + '</div>';
-        div.addEventListener('click', (function(idx){ return function(){ loadFromLibrary(JSON.stringify(window._libRows[idx])); }; })(i));
+        div.innerHTML = '<div class="library-row-title">'+(row.docName||'Untitled')+'</div>'
+          + '<div class="library-row-meta">'+meta+'</div>';
+        div.addEventListener('click', (function(idx){ return function(){ loadFromLibrary(window._libRows[idx]); }; })(i));
         results.appendChild(div);
       });
+    }
+
+    function tryJsonp() {
+      var cb = 'libCb' + Date.now();
+      var s = document.createElement('script');
+      var done = false;
+      var t = setTimeout(function() {
+        if (!done) { done=true; results.innerHTML = '<div class="library-empty">Could not load library.</div>'; }
+        if (s.parentNode) s.parentNode.removeChild(s);
+        delete window[cb];
+      }, 6000);
+      window[cb] = function(data) {
+        done=true; clearTimeout(t);
+        if (s.parentNode) s.parentNode.removeChild(s);
+        delete window[cb];
+        renderRows((data && data.rows) || []);
+      };
+      s.src = url + '&callback=' + cb;
+      document.head.appendChild(s);
+    }
+
+    fetch(url)
+    .then(function(resp){ return resp.text(); })
+    .then(function(t){
+      try { renderRows(JSON.parse(t).rows || []); }
+      catch(e) { tryJsonp(); }
     })
-    .catch(function(){ results.innerHTML = '<div class="library-empty">Could not load library.</div>'; });
-  }
-  var SECTION_TO_N = {'Three-Note Rhythm Patterns':3,'Four-Note Rhythm Patterns':4,
-    'Five-Note Rhythm Patterns':5,'Six-Note Rhythm Patterns':6,
-    'Seven-Note Rhythm Patterns':7,'Eight-Note Rhythm Patterns':8};
-  function loadFromLibrary(rj) {
-    try {
-      var r = typeof rj === 'string' ? JSON.parse(rj) : rj;
-      if (!r.notes) return;
-      selNotes = r.notes.split(',').filter(Boolean);
-      if (r.docName) document.getElementById('doc-name').value = r.docName;
-      if (r.clef) document.getElementById('clef-sel').value = r.clef;
-      if (r.key) document.getElementById('key-sel').value = r.key;
-      var n = SECTION_TO_N[r.grouping];
-      if (n) {
-        activeGroup = n;
-        document.querySelectorAll('.group-btn').forEach(function(b) {
-          b.classList.toggle('active', parseInt(b.dataset.n) === n);
-        });
-      }
-      updateChips(); upPrompt(); upHint(); checkReady();
-      closeLibrary();
-      setTimeout(function() {
-        var btn = document.getElementById('gen-btn');
-        if (btn && !btn.disabled) btn.click();
-      }, 150);
-    } catch(e) { console.log('loadFromLibrary error:', e); }
+    .catch(function(){ tryJsonp(); });
   }
   window.openLibrary=openLibrary; window.closeLibrary=closeLibrary;
   window.switchTab=switchTab; window.doLibrarySearch=doLibrarySearch;
