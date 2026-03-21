@@ -1325,10 +1325,9 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
   function getProfile() { try { return JSON.parse(localStorage.getItem('murProfile')||'{}'); } catch(e) { return {}; } }
   function setProfile(p) { localStorage.setItem('murProfile', JSON.stringify(p)); updateProfileBtn(); }
-  function updateProfileBtn() {
-    var p=getProfile();
-    var btn=document.getElementById('profile-topbar-btn');
-    if(!btn) return;
+  function updateProfileBtn(){
+    var p=getProfile(),btn=document.getElementById('profile-topbar-btn');
+    if(!btn)return;
     if(!p.email){btn.textContent='△ Sign In';btn.onclick=openSignin;}
     else{btn.textContent='△ '+(p.name||p.email.split('@')[0]);btn.onclick=openProfile;}
   }
@@ -1375,11 +1374,25 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     var params = Object.keys(payload).map(function(k) {
       return encodeURIComponent(k) + '=' + encodeURIComponent(payload[k]);
     }).join('&');
-    // Use Image() to fire GET request - bypasses CORS entirely
-    var img = new Image();
-    img.src = SCRIPT_URL + '?' + params;
-    msg.textContent = 'Saved!'; msg.className = 'modal-msg ok';
-    setTimeout(closeSave, 1200);
+    // Use script tag (JSONP) - only method that bypasses CORS redirect
+    var scb = 'saveCb' + Date.now();
+    var ss = document.createElement('script');
+    var sdone = false;
+    var st = setTimeout(function() {
+      if (!sdone) { sdone=true; msg.textContent='Saved!'; msg.className='modal-msg ok'; setTimeout(closeSave,1200); }
+      if (ss.parentNode) ss.parentNode.removeChild(ss);
+      delete window[scb];
+    }, 5000);
+    window[scb] = function(d) {
+      sdone=true; clearTimeout(st);
+      if (ss.parentNode) ss.parentNode.removeChild(ss);
+      delete window[scb];
+      msg.textContent = d.success ? 'Saved!' : 'Error saving.';
+      msg.className = d.success ? 'modal-msg ok' : 'modal-msg err';
+      if (d.success) setTimeout(closeSave, 1200);
+    };
+    ss.src = SCRIPT_URL + '?' + params + '&callback=' + scb;
+    document.head.appendChild(ss);
   }
   window.openSave=openSave; window.closeSave=closeSave; window.submitSave=submitSave;
 
@@ -1404,8 +1417,20 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
       url = SCRIPT_URL + '?action=search&query=' + encodeURIComponent(q) + '&instrument=' + encodeURIComponent(inst);
     }
     window._libRows = {};
-    function _renderRows(rows) {
-      if (!rows||!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
+    var lcb = 'libCb' + Date.now();
+    var ls = document.createElement('script');
+    var ldone = false;
+    var lt = setTimeout(function() {
+      if (!ldone) { ldone=true; results.innerHTML = '<div class="library-empty">Could not load library.</div>'; }
+      if (ls.parentNode) ls.parentNode.removeChild(ls);
+      delete window[lcb];
+    }, 8000);
+    window[lcb] = function(d) {
+      ldone=true; clearTimeout(lt);
+      if (ls.parentNode) ls.parentNode.removeChild(ls);
+      delete window[lcb];
+      var rows = d.rows||[];
+      if (!rows.length) { results.innerHTML = '<div class="library-empty">No exercises found.</div>'; return; }
       results.innerHTML = '';
       rows.forEach(function(row,i) {
         window._libRows[i] = row;
@@ -1418,29 +1443,22 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
         div.addEventListener('click',(function(idx){return function(){loadFromLibrary(window._libRows[idx]);};})(i));
         results.appendChild(div);
       });
-    }
-    function _jsonpLib() {
-      var cb='libCb'+Date.now(), s=document.createElement('script'), done=false;
-      var t=setTimeout(function(){if(!done){done=true;results.innerHTML='<div class="library-empty">Could not load library.</div>';}if(s.parentNode)s.parentNode.removeChild(s);delete window[cb];},6000);
-      window[cb]=function(d){done=true;clearTimeout(t);if(s.parentNode)s.parentNode.removeChild(s);delete window[cb];_renderRows((d&&d.rows)||[]);};
-      s.src=url+'&callback='+cb; document.head.appendChild(s);
-    }
-    fetch(url).then(function(r){return r.text();})
-    .then(function(t){try{_renderRows(JSON.parse(t).rows||[]);}catch(e){_jsonpLib();}})
-    .catch(function(){_jsonpLib();});
+    };
+    ls.src = url + '&callback=' + lcb;
+    document.head.appendChild(ls);
   }
   var _S2N={'Three-Note Rhythm Patterns':3,'Four-Note Rhythm Patterns':4,'Five-Note Rhythm Patterns':5,'Six-Note Rhythm Patterns':6,'Seven-Note Rhythm Patterns':7,'Eight-Note Rhythm Patterns':8};
   function loadFromLibrary(r) {
     try {
       if (typeof r==='string') r=JSON.parse(r);
       if (!r.notes) return;
-      selNotes = r.notes.split(',').filter(Boolean);
-      if (r.docName) document.getElementById('doc-name').value = r.docName;
-      if (r.clef) document.getElementById('clef-sel').value = r.clef;
-      if (r.key) document.getElementById('key-sel').value = r.key;
+      selNotes=r.notes.split(',').filter(Boolean);
+      if (r.docName) document.getElementById('doc-name').value=r.docName;
+      if (r.clef) document.getElementById('clef-sel').value=r.clef;
+      if (r.key) document.getElementById('key-sel').value=r.key;
       var n=_S2N[r.grouping];
-      if (n) { activeGroup=n; document.querySelectorAll('.group-btn').forEach(function(b){b.classList.toggle('active',parseInt(b.dataset.n)===n);}); }
-      updateChips(); upPrompt(); upHint(); checkReady();
+      if(n){activeGroup=n;document.querySelectorAll('.group-btn').forEach(function(b){b.classList.toggle('active',parseInt(b.dataset.n)===n);});}
+      updateChips();upPrompt();upHint();checkReady();
       closeLibrary();
       setTimeout(function(){var btn=document.getElementById('gen-btn');if(btn&&!btn.disabled)btn.click();},150);
     } catch(e){console.log('loadFromLibrary error:',e);}
@@ -1455,18 +1473,15 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
     var msg=document.getElementById('signin-msg');
     if(!email){msg.textContent='Please enter your email.';msg.className='modal-msg err';return;}
     msg.textContent='Looking up your profile...';msg.className='modal-msg';
-    function applySignin(rows){
-      var p={email:email};
+    var scb2='sigCb'+Date.now(), ss2=document.createElement('script'), sdone2=false;
+    var st2=setTimeout(function(){if(!sdone2){sdone2=true;var p=getProfile();p.email=email;setProfile(p);msg.textContent='Signed in as '+email;msg.className='modal-msg ok';setTimeout(closeSignin,1200);}if(ss2.parentNode)ss2.parentNode.removeChild(ss2);delete window[scb2];},6000);
+    window[scb2]=function(d){sdone2=true;clearTimeout(st2);if(ss2.parentNode)ss2.parentNode.removeChild(ss2);delete window[scb2];
+      var rows=d.rows||[],p={email:email};
       if(rows.length>0){p.name=rows[0].name||'';p.instrument=rows[0].instrument||'';}
-      setProfile(p);
-      msg.textContent=rows.length?'Welcome back, '+(p.name||email)+'!':'Signed in as '+email;
-      msg.className='modal-msg ok';
-      setTimeout(closeSignin,1200);
-    }
-    fetch(SCRIPT_URL+'?action=library&email='+encodeURIComponent(email))
-    .then(function(r){return r.text();})
-    .then(function(t){try{applySignin(JSON.parse(t).rows||[]);}catch(e){applySignin([]);}})
-    .catch(function(){var p=getProfile();p.email=email;setProfile(p);msg.textContent='Signed in as '+email;msg.className='modal-msg ok';setTimeout(closeSignin,1200);});
+      setProfile(p);msg.textContent=rows.length?'Welcome back, '+(p.name||email)+'!':'Signed in as '+email;msg.className='modal-msg ok';setTimeout(closeSignin,1200);
+    };
+    ss2.src=SCRIPT_URL+'?action=library&email='+encodeURIComponent(email)+'&callback='+scb2;
+    document.head.appendChild(ss2);
   }
   window.openSignin=openSignin;window.closeSignin=closeSignin;window.submitSignin=submitSignin;
   updateProfileBtn();
