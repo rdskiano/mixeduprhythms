@@ -28,10 +28,11 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 .rotate-sub { font-family: 'Inconsolata', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: #666; }
 
 /* Top bar */
-.topbar { background: var(--ink); border-bottom: 3px solid var(--accent); padding: 0 28px; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+.topbar { background: var(--ink); border-bottom: 3px solid var(--accent); padding: 0 14px; height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 8px; overflow: hidden; }
 .app-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.14em; color: var(--cream); }
-.settings-btn { background: none; border: 1px solid #444; color: #888; width: 30px; height: 30px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; }
+.settings-btn { background: none; border: 1px solid #444; color: #888; height: 30px; padding: 0 12px; cursor: pointer; font-size: 0.75rem; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; display: flex; align-items: center; justify-content: center; white-space: nowrap; transition: all 0.12s; }
 .settings-btn:hover { border-color: var(--accent); color: var(--accent); }
+.settings-btn.x { border-color: var(--accent); color: var(--accent); }
 
 /* Controls bar */
 .controls {
@@ -40,7 +41,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 }
 .ctl-block { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
 .ctl-label { font-family: 'Bebas Neue', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; color: var(--accent); }
-.group-btns { display: flex; gap: 5px; }
+.group-btns { display: flex; gap: 5px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
 .group-btn { min-width: 52px; height: 72px; border: 2px solid #2a231d; background: transparent; color: #666; cursor: pointer; transition: all 0.12s; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 6px 4px; gap: 3px; }
 .group-btn:hover { border-color: var(--accent); color: var(--accent); }
 .group-btn:hover svg { opacity: 1; }
@@ -54,8 +55,8 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 .app-sel { appearance: none; -webkit-appearance: none; background: #1a1410; border: 1px solid #333; color: var(--cream); padding: 7px 26px 7px 10px; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; cursor: pointer; }
 .app-sel:focus { outline: 1px solid var(--accent); }
 .sel-arrow { pointer-events: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #666; font-size: 0.65rem; }
-#key-sel { min-width: 190px; }
-#instrument-sel { min-width: 250px; }
+#key-sel { min-width: 140px; max-width: 100%; }
+#instrument-sel { min-width: 180px; max-width: 100%; }
 
 /* Keyboard block — full width */
 .kb-block { flex-basis: 100%; width: 100%; }
@@ -235,6 +236,23 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 /* Profile & Save & Library */
 .profile-btn { background: none; border: 1px solid #444; color: #888; padding: 0 12px; height: 30px; font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap; transition: all 0.12s; }
 .profile-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.topbar-btns { display: flex; gap: 6px; align-items: center; flex-shrink: 1; flex-wrap: wrap; justify-content: flex-end; min-width: 0; }
+.topbar-btns .profile-btn { font-size: 0.68rem; padding: 0 8px; height: 26px; white-space: nowrap; }
+@media (max-width: 600px) {
+  .topbar { padding: 0 10px; height: 52px; }
+  .app-title { font-size: 1.1rem; letter-spacing: 0.08em; }
+  .topbar > div:first-child > div:last-child { display: none; }
+  .topbar-btns { gap: 4px; }
+  .topbar-btns .settings-btn { font-size: 0.58rem; padding: 0 6px; height: 24px; letter-spacing: 0.06em; }
+  .ctl-row { gap: 8px; flex-wrap: wrap; }
+  .group-btn { min-width: 44px; height: 62px; }
+  .group-btn svg { transform: scale(0.85); transform-origin: center bottom; }
+}
+@media (max-width: 400px) {
+  .app-title { font-size: 0.95rem; }
+  .topbar-btns .settings-btn { font-size: 0.52rem; padding: 0 5px; height: 22px; }
+}
 .profile-btn.active { border-color: var(--accent); color: var(--accent); }
 .save-btn { background: none; border: 1px solid var(--accent); color: var(--accent); padding: 8px 18px; font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; letter-spacing: 0.1em; cursor: pointer; white-space: nowrap; }
 .save-btn:hover { background: var(--accent); color: white; }
@@ -284,7 +302,7 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
 <div class="topbar">
   <div style="display:flex;flex-direction:column;gap:1px"><div class="app-title">Mixed Up Rhythms</div><div style="font-family:'Inconsolata',monospace;font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;color:#aaa">Rhythm Pattern Generator</div></div>
-  <div style="display:flex;gap:8px;align-items:center"><button class="settings-btn" onclick="openProfile()" id="profile-topbar-btn" style="width:auto;padding:0 12px;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.1em">△ Profile</button><button class="settings-btn" onclick="openLibrary()" style="width:auto;padding:0 12px;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.1em">☰ Library</button><button class="settings-btn" onclick="openHelp()" style="width:auto;padding:0 12px;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.1em">Instructions</button></div>
+  <div style="topbar-btns"><button class="profile-btn" onclick="openProfile()" id="profile-topbar-btn">△ Profile</button><button class="profile-btn" onclick="openLibrary()">☰ Library</button><button class="profile-btn" onclick="openHelp()">Instructions</button></div>
 </div>
 
 <div class="controls">
@@ -1292,12 +1310,12 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
 
   // ── ORIENTATION ───────────────────────────────────────
   function checkOrientation() {
-    // Only prompt on phones (narrow screens) — iPad portrait is fine
-    var isPhone = window.screen.width <= 430 || window.screen.height <= 430;
+    // Show rotate prompt on any narrow portrait screen (phones)
+    // Use innerWidth for reliable cross-browser detection
     var isPortrait = window.innerHeight > window.innerWidth;
-    var isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    var isNarrow = window.innerWidth < 600;
     var overlay = document.getElementById('rotate-overlay');
-    if (overlay) overlay.style.display = (isTouchDevice && isPhone && isPortrait) ? 'flex' : 'none';
+    if (overlay) overlay.style.display = (isNarrow && isPortrait) ? 'flex' : 'none';
   }
 
   // ── INIT ──────────────────────────────────────────────
@@ -1436,6 +1454,12 @@ body { background: var(--ink); color: var(--cream); font-family: 'Cormorant Gara
   }
   document.addEventListener('touchstart', unlockAudio, {passive: true});
   document.addEventListener('touchend', unlockAudio, {passive: true});
+
+  updateStats();
+  upPrompt();
+  checkOrientation();
+  window.addEventListener('resize', checkOrientation);
+  window.addEventListener('orientationchange', function() { setTimeout(checkOrientation, 200); });
 
 })();
 </script>
